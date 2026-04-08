@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitch Design Worksheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0c10;--surface:#111318;--surface2:#181b22;--border:#252830;
+  --border-bright:#353a45;--accent:#4fc3f7;--accent2:#f06292;--accent3:#81c784;
+  --accent4:#ffb74d;--accent5:#ce93d8;--text:#e8eaf0;--text-dim:#7a8094;
+  --text-dimmer:#454a5a;--red:#ef5350;--green:#66bb6a;--yellow:#ffca28;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6}
+.wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:0 24px 100px}
+
+/* HEADER */
+header{padding:36px 0 28px;border-bottom:1px solid var(--border);margin-bottom:32px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.logo-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;margin-bottom:6px}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,68px);line-height:.9;letter-spacing:.02em}
+h1 span{color:var(--accent)}
+.header-sub{font-size:11px;color:var(--text-dim);margin-top:8px;font-family:'DM Mono',monospace}
+.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:9px 16px;border-radius:4px;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn-ghost{background:transparent;border:1px solid var(--border-bright);color:var(--text-dim)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-primary{background:var(--accent);color:#000;font-weight:600}
+.btn-primary:hover{background:#81d4fa}
+.btn-warn{background:transparent;border:1px solid var(--border-bright);color:var(--text-dim)}
+.btn-warn:hover{border-color:var(--red);color:var(--red)}
+
+/* TABS */
+.tab-bar{display:flex;gap:2px;margin-bottom:28px;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:10px 18px;cursor:pointer;color:var(--text-dim);border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* FIELDS */
+.field-group{display:flex;flex-direction:column;gap:5px}
+.field-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dimmer);display:flex;align-items:center;gap:6px}
+input[type="text"],input[type="number"],select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 10px;width:100%;transition:border-color .15s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+select option{background:var(--surface2)}
+textarea{resize:vertical;min-height:60px;line-height:1.5}
+.tooltip-icon{cursor:help;color:var(--text-dimmer);font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:15px;height:15px;display:inline-flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.tooltip-icon:hover .tooltip-popup{display:block}
+.tooltip-popup{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1e2230;border:1px solid var(--border-bright);border-radius:6px;padding:10px 12px;width:240px;font-size:11px;line-height:1.5;color:var(--text-dim);font-family:'DM Sans',sans-serif;text-transform:none;letter-spacing:0;z-index:100;pointer-events:none}
+
+/* SECTION */
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;margin-top:32px}
+.section-header h2{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:.05em}
+.section-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:2px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+.section-line{flex:1;height:1px;background:var(--border)}
+
+/* PITCHER INFO */
+.pitcher-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:28px;padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+
+/* CASE STUDY SELECTOR */
+.case-study-bar{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;margin-bottom:24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.case-study-bar label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+.case-study-bar select{max-width:280px}
+.case-study-note{font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace}
+
+/* PITCH CARDS */
+.pitch-cards{display:flex;flex-direction:column;gap:14px}
+.pitch-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .2s}
+.pitch-card:hover{border-color:var(--border-bright)}
+.pitch-card-header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.pitch-color-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.pitch-name-input{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.05em;background:transparent;border:none;color:var(--text);width:160px;padding:0;cursor:text}
+.pitch-name-input:focus{outline:none;border-bottom:1px solid var(--accent)}
+.pitch-type-badge{font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;letter-spacing:.08em;max-width:160px}
+.pitch-card-toggle{margin-left:auto;color:var(--text-dimmer);font-size:16px;transition:transform .2s;flex-shrink:0}
+.pitch-card.collapsed .pitch-card-toggle{transform:rotate(-90deg)}
+.pitch-card-body{padding:18px 16px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px}
+.pitch-card.collapsed .pitch-card-body{display:none}
+.sub-section-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.metric-row{display:flex;flex-direction:column;gap:4px;margin-bottom:9px}
+.metric-with-target{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.metric-sub{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dimmer);margin-top:2px}
+.delete-btn{background:transparent;border:none;color:var(--text-dimmer);cursor:pointer;font-size:13px;padding:3px 7px;border-radius:3px;transition:all .15s;font-family:'DM Mono',monospace}
+.delete-btn:hover{color:var(--red);background:rgba(239,83,80,.1)}
+.grade-row{display:flex;gap:5px;flex-wrap:wrap}
+.grade-btn{font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;border-radius:3px;border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);cursor:pointer;transition:all .12s}
+.grade-btn:hover{border-color:var(--border-bright);color:var(--text)}
+.grade-btn.selected{border-color:var(--accent);color:var(--accent);background:rgba(79,195,247,.08)}
+.add-pitch-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:transparent;border:1px dashed var(--border-bright);border-radius:8px;color:var(--text-dim);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;margin-top:10px}
+.add-pitch-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(79,195,247,.04)}
+
+/* BENCHMARK BARS */
+.benchmark-wrap{margin-top:6px}
+.benchmark-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+.benchmark-bar-track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;position:relative}
+.benchmark-bar-fill{height:100%;border-radius:3px;transition:width .4s}
+.benchmark-marker{position:absolute;top:0;height:100%;width:2px;background:var(--accent);border-radius:1px}
+.benchmark-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dimmer);white-space:nowrap}
+.benchmark-diff{font-family:'DM Mono',monospace;font-size:9px;white-space:nowrap}
+.diff-pos{color:var(--green)}
+.diff-neg{color:var(--red)}
+.diff-neu{color:var(--text-dim)}
+
+/* TUNNEL SCORE */
+.tunnel-score-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500}
+.ts-great{background:rgba(102,187,106,.15);color:var(--green);border:1px solid rgba(102,187,106,.3)}
+.ts-good{background:rgba(255,202,40,.12);color:var(--yellow);border:1px solid rgba(255,202,40,.25)}
+.ts-poor{background:rgba(239,83,80,.12);color:var(--red);border:1px solid rgba(239,83,80,.25)}
+.ts-na{background:var(--surface2);color:var(--text-dimmer);border:1px solid var(--border)}
+
+/* RECOMMENDER */
+.recommend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:4px}
+.recommend-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
+.recommend-card h4{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--accent4);margin-bottom:6px}
+.recommend-card p{font-size:12px;color:var(--text-dim);line-height:1.5}
+.recommend-card .why{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dimmer);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.no-recommend{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dimmer);padding:20px;text-align:center;border:1px dashed var(--border);border-radius:8px}
+
+/* PLATOON */
+.platoon-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.platoon-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
+.platoon-card h4{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px}
+.platoon-pitch-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.platoon-pitch-name{font-size:12px;min-width:90px;color:var(--text)}
+.platoon-bar-track{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.platoon-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.platoon-rating{font-family:'DM Mono',monospace;font-size:10px;min-width:50px;text-align:right}
+.platoon-good{color:var(--green)}
+.platoon-ok{color:var(--yellow)}
+.platoon-bad{color:var(--red)}
+
+/* MOVEMENT PLOT */
+.movement-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px}
+.movement-canvas-wrap{position:relative;width:100%;aspect-ratio:1;max-width:360px;margin:0 auto}
+#movementCanvas{width:100%;height:100%;border-radius:4px}
+.canvas-legend{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);font-family:'DM Mono',monospace}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+
+/* SUMMARY */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:14px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px 14px}
+.summary-card-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text-dimmer);text-transform:uppercase;margin-bottom:4px}
+.summary-card-val{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;color:var(--text)}
+.summary-card-val.accent{color:var(--accent)}
+
+/* SCOUTING */
+.scouting-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.scouting-block{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
+.scouting-block h3{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;color:var(--accent)}
+
+/* TUNNEL TABLE */
+.tunnel-table{width:100%;border-collapse:collapse;font-size:12px}
+.tunnel-table th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dimmer);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--surface2)}
+.tunnel-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tunnel-table tr:last-child td{border-bottom:none}
+.tunnel-table tr:hover td{background:rgba(255,255,255,.02)}
+
+/* GRIP LIBRARY */
+.grip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.grip-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;cursor:pointer;transition:all .15s}
+.grip-card:hover{border-color:var(--accent);background:rgba(79,195,247,.04)}
+.grip-card h4{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--text);margin-bottom:4px}
+.grip-card .grip-type{font-family:'DM Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.grip-card p{font-size:11px;color:var(--text-dim);line-height:1.5}
+.grip-stat{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dimmer)}
+.grip-stat span{color:var(--text-dim)}
+
+/* URL SHARE */
+.share-bar{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;display:flex;align-items:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+.share-url{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.copy-success{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);display:none}
+
+/* BEFORE/AFTER */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ba-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
+.ba-panel h3{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.ba-panel h3.before{color:var(--text-dim)}
+.ba-panel h3.after{color:var(--accent)}
+.ba-diff-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.ba-diff-row:last-child{border-bottom:none}
+.ba-label{flex:1;color:var(--text-dim)}
+.ba-val{font-family:'DM Mono',monospace;font-size:11px;min-width:50px;text-align:right}
+.ba-arrow{font-size:10px;color:var(--text-dimmer)}
+
+@media(max-width:800px){.pitch-card-body{grid-template-columns:1fr 1fr}.scouting-grid,.platoon-grid,.ba-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.pitch-card-body{grid-template-columns:1fr}}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body > *:not(#printOverlay){display:none!important}
+  body::before{display:none!important}
+  #printOverlay{display:block!important;position:static!important;padding:0 32px!important;background:#0a0c10!important}
+  .po-close,.po-print{display:none!important}
+}
+</style>
+</head>
+<body>
+<div id="printOverlay"></div>
+<div class="wrap">
+
+<header>
+  <div class="logo-block">
+    <div class="logo-eyebrow">⚾ Player Development Tool</div>
+    <h1>PITCH<span>DESIGN</span><br>WORKSHEET</h1>
+    <div class="header-sub">// arsenal analysis + development planning // @SebThrows</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="shareURL()">🔗 Share Link</button>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    <button class="btn btn-primary" onclick="printReport()">&#8595; Download Report</button>
+  </div>
+</header>
+
+<!-- SHARE BAR -->
+<div class="share-bar" id="shareBar" style="display:none">
+  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);white-space:nowrap">Share URL:</span>
+  <div class="share-url" id="shareURL"></div>
+  <button class="btn btn-ghost" onclick="copyURL()">Copy</button>
+  <span class="copy-success" id="copySuccess">✓ Copied!</span>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab('arsenal')">Arsenal Builder</div>
+  <div class="tab" onclick="switchTab('analysis')">Analysis & Recommender</div>
+  <div class="tab" onclick="switchTab('platoon')">Platoon Splits</div>
+  <div class="tab" onclick="switchTab('tunnel')">Tunneling</div>
+  <div class="tab" onclick="switchTab('scouting')">Scouting Report</div>
+  <div class="tab" onclick="switchTab('grips')">Grip Library</div>
+  <div class="tab" onclick="switchTab('beforeafter')">Before / After</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB: ARSENAL -->
+<div class="tab-content active" id="tab-arsenal">
+
+  <div class="case-study-bar">
+    <label>Load Example Arsenal:</label>
+    <select onchange="loadCaseStudy(this.value)">
+      <option value="">— Select a pitcher —</option>
+      <option value="cole">Gerrit Cole (RHP, MLB)</option>
+      <option value="strider">Spencer Strider (RHP, MLB)</option>
+      <option value="snell">Blake Snell (LHP, MLB)</option>
+      <option value="ryan">Joe Ryan (RHP, MLB)</option>
+      <option value="college_starter">Generic College Starter (RHP)</option>
+    </select>
+    <span class="case-study-note">// Loads 2024 Savant averages — study elite arsenals</span>
+  </div>
+
+  <div class="pitcher-info-grid">
+    <div class="field-group"><label class="field-label">Pitcher Name</label><input type="text" id="pitcherName" placeholder="e.g. Jake Martinez"></div>
+    <div class="field-group"><label class="field-label">Throws</label><select id="throws" onchange="updatePlatoon();updateRecommender()"><option value="">Select</option><option>RHP</option><option>LHP</option></select></div>
+    <div class="field-group"><label class="field-label">Role</label><select id="role"><option value="">Select</option><option>Starter</option><option>Reliever</option><option>Closer</option></select></div>
+    <div class="field-group"><label class="field-label">Level</label><select id="level"><option value="">Select</option><option>High School</option><option>College</option><option>Independent</option><option>MiLB</option><option>MLB</option></select></div>
+    <div class="field-group"><label class="field-label">Season / Date</label><input type="text" id="season" placeholder="e.g. Fall 2025"></div>
+    <div class="field-group"><label class="field-label">Data Source</label><select id="dataSource"><option value="">Select</option><option>Trackman</option><option>Rapsodo</option><option>Baseball Savant</option><option>Hawkeye</option><option>Visual Scout</option><option>Other</option></select></div>
+    <div class="field-group"><label class="field-label">Coach / Analyst</label><input type="text" id="coach" placeholder="Your name"></div>
+    <div class="field-group"><label class="field-label">Primary Weakness</label><input type="text" id="weakness" placeholder="e.g. No vertical separation"></div>
+  </div>
+
+  <div class="section-header"><h2>Arsenal</h2><span class="section-tag">current + target profiles</span><div class="section-line"></div></div>
+  <div class="pitch-cards" id="pitchCards"></div>
+  <button class="add-pitch-btn" onclick="addPitch()"><span>+</span> Add Pitch</button>
+
+  <div class="section-header"><h2>Movement Plot</h2><span class="section-tag">break profile visualization</span><div class="section-line"></div></div>
+  <div class="movement-panel">
+    <div class="movement-canvas-wrap"><canvas id="movementCanvas"></canvas></div>
+    <div class="canvas-legend" id="canvasLegend"></div>
+    <p style="text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dimmer);margin-top:10px">Enter HB + IVB above to plot pitches. Positive HB = arm side. Positive IVB = ride.</p>
+  </div>
+
+  <div class="section-header"><h2>Arsenal Summary</h2><span class="section-tag">auto-calculated</span><div class="section-line"></div></div>
+  <div class="summary-grid">
+    <div class="summary-card"><div class="summary-card-label">Total Pitches</div><div class="summary-card-val accent" id="sumTotal">0</div></div>
+    <div class="summary-card"><div class="summary-card-label">Avg Velo</div><div class="summary-card-val" id="sumVelo">—</div></div>
+    <div class="summary-card"><div class="summary-card-label">Velo Range</div><div class="summary-card-val" id="sumRange">—</div></div>
+    <div class="summary-card"><div class="summary-card-label">Usage Total</div><div class="summary-card-val" id="sumUsage">0%</div></div>
+    <div class="summary-card"><div class="summary-card-label">Avg Spin</div><div class="summary-card-val" id="sumSpin">—</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB: ANALYSIS -->
+<div class="tab-content" id="tab-analysis">
+  <div class="section-header"><h2>Pitch Recommender</h2><span class="section-tag">arsenal gap analysis</span><div class="section-line"></div></div>
+  <div id="recommenderOutput"><div class="no-recommend">Build your arsenal on the Arsenal tab to get recommendations.</div></div>
+
+  <div class="section-header"><h2>MLB Benchmarks</h2><span class="section-tag">2024 statcast averages</span><div class="section-line"></div></div>
+  <div id="benchmarkOutput"><div class="no-recommend">Add pitches with data to compare against MLB averages.</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB: PLATOON -->
+<div class="tab-content" id="tab-platoon">
+  <div class="section-header"><h2>Platoon Split Estimator</h2><span class="section-tag">same-side vs opposite-side</span><div class="section-line"></div></div>
+  <p style="font-size:12px;color:var(--text-dim);margin-bottom:16px;font-family:'DM Mono',monospace">Based on pitch type, movement, and handedness. Fill in your arsenal to generate estimates.</p>
+  <div class="platoon-grid" id="platoonOutput">
+    <div class="platoon-card"><h4>vs. Right-Handed Hitters</h4><p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">Add pitches to see platoon analysis.</p></div>
+    <div class="platoon-card"><h4>vs. Left-Handed Hitters</h4><p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">Add pitches to see platoon analysis.</p></div>
+  </div>
+
+  <div class="section-header" style="margin-top:28px"><h2>Platoon Vulnerability Notes</h2><span class="section-tag">coaching notes</span><div class="section-line"></div></div>
+  <div class="scouting-block"><h3>Exposed Quadrants / Weaknesses</h3>
+    <textarea id="platoonNotes" placeholder="e.g. vs LHH: sweeper backs up too early, changeup grades out below average due to LHP arm action. Need to develop a cut fastball or sinker to attack inside." rows="5"></textarea>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB: TUNNELING -->
+<div class="tab-content" id="tab-tunnel">
+  <div class="section-header"><h2>Tunnel Pairs</h2><span class="section-tag">movement divergence analysis</span><div class="section-line"></div></div>
+  <p style="font-size:12px;color:var(--text-dim);margin-bottom:16px;font-family:'DM Mono',monospace">Tunnel score = similarity of movement profiles. Higher = pitches look more alike until the decision point (~23ft). 80+ is elite, 60–79 is solid, below 60 needs work.</p>
+  <div id="tunnelTableWrap"><div class="no-recommend">Add at least 2 pitches with HB + IVB data to generate tunnel scores.</div></div>
+
+  <div class="section-header" style="margin-top:28px"><h2>Sequencing Recommendations</h2><span class="section-tag">count-based approach</span><div class="section-line"></div></div>
+  <div class="scouting-grid">
+    <div class="scouting-block"><h3>Early Count (0-0, 1-0, 0-1)</h3><textarea id="seqEarly" rows="4" placeholder="What do you establish early? What sets up your out pitch?"></textarea></div>
+    <div class="scouting-block"><h3>Hitter's Count (2-0, 3-1)</h3><textarea id="seqHitter" rows="4" placeholder="What's your go-to in a fastball count? How do you attack aggressively?"></textarea></div>
+    <div class="scouting-block"><h3>Pitcher's Count (0-2, 1-2)</h3><textarea id="seqPitcher" rows="4" placeholder="What's your strikeout sequence? Expand or attack?"></textarea></div>
+    <div class="scouting-block"><h3>Even Count (1-1, 2-2)</h3><textarea id="seqEven" rows="4" placeholder="Neutral count approach. What do you default to?"></textarea></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB: SCOUTING -->
+<div class="tab-content" id="tab-scouting">
+  <div class="section-header"><h2>Scouting Report</h2><span class="section-tag">development notes</span><div class="section-line"></div></div>
+  <div class="scouting-grid">
+    <div class="scouting-block"><h3>Arsenal Strengths</h3><textarea id="strengths" rows="5" placeholder="What does this pitcher do well? What pitches grade out? What sequencing works?"></textarea></div>
+    <div class="scouting-block"><h3>Development Priorities</h3><textarea id="priorities" rows="5" placeholder="What needs to change? New pitch needed? Grip adjustment? Spin axis work?"></textarea></div>
+    <div class="scouting-block"><h3>Platoon Vulnerabilities</h3><textarea id="platoon" rows="5" placeholder="How does the arsenal play vs. same-side vs. opposite-side? Any exposed quadrants?"></textarea></div>
+    <div class="scouting-block"><h3>30 / 60 / 90 Day Action Plan</h3><textarea id="actionPlan" rows="5" placeholder="Step-by-step plan. What do you work on first? Any grip changes to trial?"></textarea></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB: GRIP LIBRARY -->
+<div class="tab-content" id="tab-grips">
+  <div class="section-header"><h2>Grip Library</h2><span class="section-tag">reference guide</span><div class="section-line"></div></div>
+  <p style="font-size:12px;color:var(--text-dim);margin-bottom:16px;font-family:'DM Mono',monospace">Click any grip to copy its typical spin axis and movement profile to your clipboard.</p>
+  <div class="grip-grid" id="gripGrid"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB: BEFORE/AFTER -->
+<div class="tab-content" id="tab-beforeafter">
+  <div class="section-header"><h2>Before / After Comparison</h2><span class="section-tag">progress tracking</span><div class="section-line"></div></div>
+  <p style="font-size:12px;color:var(--text-dim);margin-bottom:20px;font-family:'DM Mono',monospace">Document where a pitcher started vs. where they are now. Paste a saved share URL into "Load Before Snapshot" to populate the left column.</p>
+
+  <div class="ba-grid">
+    <div class="ba-panel">
+      <h3 class="before">⬤ Before Snapshot</h3>
+      <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" id="beforeDate" placeholder="Paste share URL here" style="flex:1;min-width:200px">
+        <button class="btn btn-ghost" onclick="loadBeforeFromURL()">Load from URL</button>
+      </div>
+      <div id="beforeContent"><p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">No before data loaded. Use the arsenal tab to build a profile, copy the share link, then paste it above.</p></div>
+    </div>
+    <div class="ba-panel">
+      <h3 class="after">⬤ After (Current)</h3>
+      <div style="margin-bottom:12px"><input type="text" id="afterDate" placeholder="Date / Session label"></div>
+      <div id="afterContent"></div>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:24px"><h2>Progress Notes</h2><div class="section-line"></div></div>
+  <div class="scouting-block"><h3>What Changed & Why</h3>
+    <textarea id="progressNotes" rows="6" placeholder="Document what adjustments were made, what drills were used, grip changes trialed, and what the data shows as a result of the work..."></textarea>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
+const PITCH_COLORS=['#4fc3f7','#f06292','#81c784','#ffb74d','#ce93d8','#80deea','#ffcc02','#ff8a65'];
+const PITCH_TYPES=['4-Seam FB','2-Seam / Sinker','Cut Fastball','Changeup','Circle Change','Splitter','Slider','Sweeper','Curveball','Slurve','Knuckle Curve','Custom'];
+
+// 2024 MLB Statcast averages by pitch type
+const MLB_BENCHMARKS = {
+  '4-Seam FB':   {velo:94.0,spin:2268,hb:8.5, ivb:16.2,ext:6.3,label:'4-Seam Fastball'},
+  '2-Seam / Sinker':{velo:93.0,spin:2166,hb:13.5,ivb:5.8, ext:6.2,label:'Sinker'},
+  'Cut Fastball':{velo:88.5,spin:2380,hb:-2.5,ivb:9.8, ext:6.1,label:'Cutter'},
+  'Changeup':    {velo:85.0,spin:1760,hb:10.2,ivb:5.5, ext:6.0,label:'Changeup'},
+  'Circle Change':{velo:84.5,spin:1740,hb:11.0,ivb:5.0,ext:6.0,label:'Circle Change'},
+  'Splitter':    {velo:84.0,spin:1380,hb:6.5, ivb:-2.8,ext:6.2,label:'Splitter'},
+  'Slider':      {velo:84.5,spin:2480,hb:-2.8,ivb:1.2, ext:6.0,label:'Slider'},
+  'Sweeper':     {velo:81.5,spin:2640,hb:-14.2,ivb:2.5,ext:5.9,label:'Sweeper'},
+  'Curveball':   {velo:78.5,spin:2620,hb:-4.2,ivb:-8.5,ext:5.7,label:'Curveball'},
+  'Slurve':      {velo:80.5,spin:2500,hb:-8.5,ivb:-3.5,ext:5.8,label:'Slurve'},
+  'Knuckle Curve':{velo:77.0,spin:2700,hb:-5.0,ivb:-11.0,ext:5.7,label:'Knuckle Curve'},
+};
+
+// Case study data
+const CASE_STUDIES = {
+  cole:{name:'Gerrit Cole',throws:'RHP',role:'Starter',level:'MLB',season:'2024',dataSource:'Baseball Savant',
+    pitches:[
+      {name:'4-Seam',type:'4-Seam FB',veloNow:'97.2',spinNow:'2538',axisNow:'12:15',hbNow:'9.4',ivbNow:'18.6',extNow:'6.8',usage:'52',grade:'80'},
+      {name:'Sweeper',type:'Sweeper',veloNow:'84.1',spinNow:'2810',axisNow:'3:30',hbNow:'-16.2',ivbNow:'3.1',extNow:'5.9',usage:'22',grade:'70'},
+      {name:'Knuckle Curve',type:'Knuckle Curve',veloNow:'80.2',spinNow:'2910',axisNow:'6:00',hbNow:'-5.8',ivbNow:'-12.4',extNow:'5.8',usage:'14',grade:'70'},
+      {name:'Changeup',type:'Changeup',veloNow:'88.5',spinNow:'1680',axisNow:'1:30',hbNow:'12.1',ivbNow:'6.2',extNow:'6.2',usage:'12',grade:'60'},
+    ]},
+  strider:{name:'Spencer Strider',throws:'RHP',role:'Starter',level:'MLB',season:'2024',dataSource:'Baseball Savant',
+    pitches:[
+      {name:'4-Seam',type:'4-Seam FB',veloNow:'99.1',spinNow:'2566',axisNow:'12:00',hbNow:'7.2',ivbNow:'19.8',extNow:'6.9',usage:'68',grade:'80'},
+      {name:'Slider',type:'Slider',veloNow:'88.4',spinNow:'2740',axisNow:'2:30',hbNow:'-4.1',ivbNow:'0.5',extNow:'6.1',usage:'29',grade:'80'},
+      {name:'Changeup',type:'Changeup',veloNow:'90.2',spinNow:'1820',axisNow:'1:00',hbNow:'10.5',ivbNow:'7.8',extNow:'6.5',usage:'3',grade:'45'},
+    ]},
+  snell:{name:'Blake Snell',throws:'LHP',role:'Starter',level:'MLB',season:'2024',dataSource:'Baseball Savant',
+    pitches:[
+      {name:'4-Seam',type:'4-Seam FB',veloNow:'95.0',spinNow:'2340',axisNow:'10:30',hbNow:'-8.5',ivbNow:'15.2',extNow:'6.4',usage:'42',grade:'60'},
+      {name:'Sweeper',type:'Sweeper',veloNow:'81.2',spinNow:'2780',axisNow:'8:30',hbNow:'15.8',ivbNow:'3.2',extNow:'5.8',usage:'30',grade:'70'},
+      {name:'Curveball',type:'Curveball',veloNow:'78.4',spinNow:'2850',axisNow:'9:00',hbNow:'6.2',ivbNow:'-10.5',extNow:'5.7',usage:'18',grade:'70'},
+      {name:'Changeup',type:'Changeup',veloNow:'86.5',spinNow:'1820',axisNow:'10:00',hbNow:'-11.2',ivbNow:'5.5',extNow:'6.1',usage:'10',grade:'55'},
+    ]},
+  ryan:{name:'Joe Ryan',throws:'RHP',role:'Starter',level:'MLB',season:'2024',dataSource:'Baseball Savant',
+    pitches:[
+      {name:'4-Seam',type:'4-Seam FB',veloNow:'93.8',spinNow:'2540',axisNow:'12:00',hbNow:'6.8',ivbNow:'19.2',extNow:'6.5',usage:'48',grade:'60'},
+      {name:'Curveball',type:'Curveball',veloNow:'78.5',spinNow:'2820',axisNow:'6:30',hbNow:'-5.5',ivbNow:'-14.2',extNow:'5.7',usage:'24',grade:'65'},
+      {name:'Slider',type:'Slider',veloNow:'83.4',spinNow:'2500',axisNow:'3:00',hbNow:'-3.2',ivbNow:'0.8',extNow:'5.9',usage:'18',grade:'55'},
+      {name:'Changeup',type:'Changeup',veloNow:'84.2',spinNow:'1780',axisNow:'1:15',hbNow:'9.8',ivbNow:'5.2',extNow:'6.1',usage:'10',grade:'50'},
+    ]},
+  college_starter:{name:'Generic College Starter',throws:'RHP',role:'Starter',level:'College',season:'2025',dataSource:'Trackman',
+    pitches:[
+      {name:'4-Seam',type:'4-Seam FB',veloNow:'88.5',spinNow:'2100',axisNow:'12:30',hbNow:'7.5',ivbNow:'12.5',extNow:'6.0',usage:'55',grade:'45'},
+      {name:'Curveball',type:'Curveball',veloNow:'74.0',spinNow:'2300',axisNow:'6:00',hbNow:'-4.0',ivbNow:'-8.0',extNow:'5.6',usage:'25',grade:'45'},
+      {name:'Changeup',type:'Changeup',veloNow:'80.5',spinNow:'1650',axisNow:'1:30',hbNow:'9.0',ivbNow:'4.5',extNow:'5.9',usage:'20',grade:'40'},
+    ]},
+};
+
+// Grip library data
+const GRIPS = [
+  {name:'4-Seam Fastball',cat:'Fastball',axis:'12:00–12:30',spin:'2100–2600 rpm',ivb:'+14 to +20"',hb:'+6 to +10"',
+   desc:'Index and middle fingers across the top 2 seams. Ring finger tucked on side. Thumb underneath on smooth leather. Drive through the top of the ball with equal finger pressure.',
+   cue:'Feel like you\'re pulling a window shade straight down. Keep wrist firm through release.'},
+  {name:'2-Seam / Sinker',cat:'Fastball',axis:'1:00–1:30',spin:'1900–2300 rpm',ivb:'+4 to +8"',hb:'+10 to +16"',
+   desc:'Index and middle fingers on the narrow seam gap, slightly off-center toward index. Thumb directly beneath. Pronate slightly through release. Fingers slightly inside the ball.',
+   cue:'Let the ball run out of your hand. Pronate at the last second. Think "turn a doorknob" at release.'},
+  {name:'Cut Fastball',cat:'Fastball',axis:'1:30–2:30',spin:'2200–2600 rpm',ivb:'+8 to +12"',hb:'-1 to -5"',
+   desc:'4-seam grip shifted slightly off-center toward middle finger. Middle finger applies more pressure. Stay through the ball rather than around it. Minimal pronation.',
+   cue:'Drive through the outer half of the ball. "Cut" with the middle finger at release. Short and direct path.'},
+  {name:'Changeup',cat:'Offspeed',axis:'1:00–1:30',spin:'1500–1900 rpm',ivb:'+4 to +8"',hb:'+9 to +13"',
+   desc:'Circle or 3-finger grip. Ball driven deep in palm with circle formed by index/thumb. Maintain identical arm speed and tunnel as fastball. Release off ring/middle fingers.',
+   cue:'Throw it like you\'re mad — arm speed identical to fastball. The grip does the work. Don\'t slow your arm down.'},
+  {name:'Sweeper',cat:'Breaking Ball',axis:'3:00–4:00',spin:'2400–2900 rpm',ivb:'+1 to +5"',hb:'-12 to -18"',
+   desc:'Spike or spike-adjacent grip on the seam. Fingers tilted toward glove side. Wrist supinated at release. Drive down the side of the ball. Think more "loop" than "snap."',
+   cue:'Spin axis should feel like 3 o\'clock. Lead with the elbow, release off the side. Ball should feel like it rolls off your index finger.'},
+  {name:'Slider',cat:'Breaking Ball',axis:'2:00–3:00',spin:'2300–2700 rpm',ivb:'+0 to +3"',hb:'-2 to -6"',
+   desc:'Off-center 4-seam grip tilted toward middle finger. Drive through the front of the ball. Tighter rotation than sweeper — more depth, less horizontal. Wrist stays firm.',
+   cue:'Stay through the ball. Should feel tight and late. If it\'s spinning early, you\'re going around it — drive through instead.'},
+  {name:'Curveball',cat:'Breaking Ball',axis:'6:00–7:00',spin:'2400–2900 rpm',ivb:'-7 to -14"',hb:'-3 to -7"',
+   desc:'Middle finger on top seam, index alongside. Thumb underneath. Snap fingers down and through the ball at release. 12-to-6 spin axis. Full wrist engagement.',
+   cue:'Snap your fingers over the top. Drive the middle finger toward the ground. Think "bouncing a ball off the ground" with your release.'},
+  {name:'Knuckle Curve',cat:'Breaking Ball',axis:'6:00–6:30',spin:'2600–3000 rpm',ivb:'-9 to -15"',hb:'-4 to -7"',
+   desc:'Index finger knuckled against seam or pulled back. Middle finger drives on top seam. Creates tighter, sharper loop than standard curve. Late break with higher spin efficiency.',
+   cue:'Knuckle the index, drive the middle finger through. Tighter and later than a normal curve. The knuckle helps create a different spin axis.'},
+  {name:'Splitter',cat:'Offspeed',axis:'12:00–1:00',spin:'1100–1600 rpm',ivb:'-2 to -6"',hb:'+4 to +9"',
+   desc:'Ball split wide between index and middle fingers. Thumb underneath. Drive through the ball. Low spin causes late downward tumble. Arm speed same as fastball.',
+   cue:'Spread fingers wide and drive through. Don\'t try to make it break — the reduced spin does it. Commit to the same release point as your fastball.'},
+  {name:'Circle Change',cat:'Offspeed',axis:'1:00–2:00',spin:'1600–2000 rpm',ivb:'+3 to +7"',hb:'+10 to +15"',
+   desc:'Circle formed by index and thumb on the side. Three remaining fingers on top. Ball released off ring finger and middle finger. Promotes arm-side run and fade.',
+   cue:'The circle faces the batter at release. Arm speed stays up. Pronation happens naturally — don\'t force it.'},
+];
+
+// Recommender logic
+const RECOMMEND_RULES = [
+  {
+    id:'no_horizontal',
+    check:(pitches,hand)=>{
+      const hasHoriz = pitches.some(p=>{
+        const hb=parseFloat(p.hbNow);
+        return !isNaN(hb) && (hand==='RHP'?hb<-8:hb>8);
+      });
+      return !hasHoriz && pitches.length>0;
+    },
+    pitch:'Sweeper',
+    title:'Add a Sweeper',
+    reason:'Your arsenal has no significant horizontal breaking ball. A sweeper creates movement contrast that your current pitches can\'t provide — especially effective vs. same-handed hitters.',
+    benefit:'Creates widest possible movement separation. Hardest pitch to tunnel for hitters when combined with a riding 4-seam.'
+  },
+  {
+    id:'no_offspeed',
+    check:(pitches)=>{
+      const offspeed=['Changeup','Circle Change','Splitter'];
+      return pitches.length>0 && !pitches.some(p=>offspeed.includes(p.type));
+    },
+    pitch:'Changeup',
+    title:'Develop a Changeup',
+    reason:'No offspeed pitch detected. Without a velocity-differential pitch, hitters can time your stuff more easily. A changeup tunneling off your fastball is the most valuable pitch you can add.',
+    benefit:'Creates timing disruption. Neutralizes opposite-handed hitters. Keeps hitters honest in 2-strike counts.'
+  },
+  {
+    id:'no_depth',
+    check:(pitches)=>{
+      const hasDepth=pitches.some(p=>{const ivb=parseFloat(p.ivbNow);return !isNaN(ivb)&&ivb<-4;});
+      return pitches.length>1&&!hasDepth;
+    },
+    pitch:'Curveball / Knuckle Curve',
+    title:'Add Vertical Depth',
+    reason:'No pitch with significant downward break detected. Hitters can set their eye level against pitches that all stay in the same vertical band. A power curve creates a third vertical plane.',
+    benefit:'Generates swings over the top. Pairs exceptionally well with a rising 4-seam to create maximum vertical separation.'
+  },
+  {
+    id:'velo_gap',
+    check:(pitches)=>{
+      const velos=pitches.map(p=>parseFloat(p.veloNow)).filter(v=>!isNaN(v));
+      if(velos.length<2)return false;
+      const range=Math.max(...velos)-Math.min(...velos);
+      return range<10;
+    },
+    pitch:'Splitter or Changeup',
+    title:'Increase Velocity Separation',
+    reason:'Your velocity range is under 10 mph. Elite arsenals typically span 15–20 mph from fastest to slowest. A pitch 12+ mph off your fastball forces hitters to manage more timing variance.',
+    benefit:'Forces hitters to sit on one speed. Can turn solid-contact hitters into early/late swings.'
+  },
+  {
+    id:'usage_unbalanced',
+    check:(pitches)=>{
+      const usages=pitches.map(p=>parseFloat(p.usage)).filter(v=>!isNaN(v));
+      if(!usages.length)return false;
+      return Math.max(...usages)>65;
+    },
+    pitch:'Secondary Development',
+    title:'Diversify Usage',
+    reason:'One pitch exceeds 65% usage. Predictability at the MLB level gets punished quickly. Developing a secondary that earns 20%+ usage reduces fastball predictability and extends your arsenal.',
+    benefit:'Keeps hitters from sitting on one pitch. Allows you to work backwards from your best secondary in favorable counts.'
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let pitches=[];
+let beforeSnapshot=null;
+let pidCounter=0;
+
+// ═══════════════════════════════════════════════════════════════
+// PITCH CRUD
+// ═══════════════════════════════════════════════════════════════
+function addPitch(data=null){
+  const id=++pidCounter;
+  const colorIdx=pitches.length%PITCH_COLORS.length;
+  const pitch=data?{...data,id}:{id,colorIdx,name:'Pitch '+(pitches.length+1),type:'',
+    veloNow:'',veloTarget:'',spinNow:'',spinTarget:'',axisNow:'',axisTarget:'',
+    hbNow:'',hbTarget:'',ivbNow:'',ivbTarget:'',extNow:'',extTarget:'',
+    usage:'',grade:'',gripNotes:'',designNotes:'',tunnelPartner:'',collapsed:false};
+  if(!data)pitch.colorIdx=colorIdx;
+  pitches.push(pitch);
+  refresh();
+}
+
+function removePitch(id){
+  pitches=pitches.filter(p=>p.id!==id);
+  refresh();
+}
+
+function toggleCollapse(id){
+  const p=pitches.find(p=>p.id===id);
+  if(p){p.collapsed=!p.collapsed;renderCards();}
+}
+
+function updateField(id,field,value){
+  const p=pitches.find(p=>p.id===id);
+  if(p){
+    p[field]=value;
+    if(['hbNow','ivbNow','name'].includes(field)){drawPlot();updateLegend();}
+    if(['veloNow','usage','spinNow'].includes(field))updateSummary();
+  }
+}
+
+function setGrade(id,grade){
+  const p=pitches.find(p=>p.id===id);
+  if(p){p.grade=grade;renderCards();}
+}
+
+function refresh(){
+  renderCards();
+  updateSummary();
+  drawPlot();
+  updateAnalysis();
+  updatePlatoon();
+  updateTunnelTable();
+  updateBeforeAfterCurrent();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER CARDS
+// ═══════════════════════════════════════════════════════════════
+function renderCards(){
+  const container=document.getElementById('pitchCards');
+  container.innerHTML='';
+  pitches.forEach(pitch=>{
+    const color=PITCH_COLORS[pitch.colorIdx%PITCH_COLORS.length];
+    const bm=MLB_BENCHMARKS[pitch.type];
+    const card=document.createElement('div');
+    card.className='pitch-card'+(pitch.collapsed?' collapsed':'');
+    card.innerHTML=`
+    <div class="pitch-card-header" onclick="toggleCollapse(${pitch.id})">
+      <div class="pitch-color-dot" style="background:${color}"></div>
+      <input class="pitch-name-input" type="text" value="${escH(pitch.name)}"
+        onclick="event.stopPropagation()"
+        oninput="updateField(${pitch.id},'name',this.value)">
+      <select class="pitch-type-badge" style="background:${color}18;color:${color};border:1px solid ${color}44;font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;"
+        onclick="event.stopPropagation()"
+        onchange="updateField(${pitch.id},'type',this.value);renderCards()">
+        <option value="">Type...</option>
+        ${PITCH_TYPES.map(t=>`<option ${pitch.type===t?'selected':''}>${t}</option>`).join('')}
+      </select>
+      <button class="delete-btn" onclick="event.stopPropagation();removePitch(${pitch.id})">✕</button>
+      <span class="pitch-card-toggle">▾</span>
+    </div>
+    <div class="pitch-card-body">
+      <div>
+        <div class="sub-section-title">Velocity & Spin</div>
+        ${metricPair(pitch.id,'veloNow','veloTarget','Velocity (mph)','mphtip')}
+        ${metricPair(pitch.id,'spinNow','spinTarget','Spin Rate (rpm)','spintip')}
+        ${metricPair(pitch.id,'axisNow','axisTarget','Spin Axis (clock)','axistip',true)}
+        ${metricPair(pitch.id,'extNow','extTarget','Extension (ft)','exttip')}
+      </div>
+      <div>
+        <div class="sub-section-title">Movement Profile</div>
+        ${metricPair(pitch.id,'hbNow','hbTarget','Horiz. Break — HB (in)','hbtip')}
+        ${metricPair(pitch.id,'ivbNow','ivbTarget','Induced Vert. Break — IVB (in)','ivbtip')}
+        <div class="metric-row" style="margin-top:10px">
+          <div class="field-label">Usage %
+            <span class="tooltip-icon">?<span class="tooltip-popup">Percentage of total pitches thrown in-game. All pitches should ideally add to ~100%.</span></span>
+          </div>
+          <input type="number" placeholder="e.g. 35" value="${escH(pitch.usage)}"
+            oninput="updateField(${pitch.id},'usage',this.value)">
+        </div>
+        <div class="metric-row" style="margin-top:10px">
+          <div class="field-label">Present Grade (20–80)
+            <span class="tooltip-icon">?<span class="tooltip-popup">20–80 scouting scale. 50 = MLB average. 60 = plus pitch. 70 = double-plus. 80 = best in the game.</span></span>
+          </div>
+          <div class="grade-row">
+            ${['20','30','40','45','50','55','60','70','80'].map(g=>
+              `<button class="grade-btn ${pitch.grade===g?'selected':''}"
+                onclick="setGrade(${pitch.id},'${g}')">${g}</button>`
+            ).join('')}
+          </div>
+        </div>
+        ${bm?benchmarkSection(pitch,bm):''}
+      </div>
+      <div>
+        <div class="sub-section-title">Grip & Design Notes</div>
+        <div class="metric-row">
+          <div class="field-label">Current Grip</div>
+          <textarea placeholder="Finger placement, seam orientation, pressure points..."
+            oninput="updateField(${pitch.id},'gripNotes',this.value)" rows="3">${escH(pitch.gripNotes)}</textarea>
+        </div>
+        <div class="metric-row">
+          <div class="field-label">Design Prescription</div>
+          <textarea placeholder="What changes? Grip tweak, axis adjustment, intent change, new pitch?"
+            oninput="updateField(${pitch.id},'designNotes',this.value)" rows="3">${escH(pitch.designNotes||'')}</textarea>
+        </div>
+        <div class="metric-row">
+          <div class="field-label">Tunnels With</div>
+          <input type="text" placeholder="e.g. Pairs with 4-Seam" value="${escH(pitch.tunnelPartner||'')}"
+            oninput="updateField(${pitch.id},'tunnelPartner',this.value)">
+        </div>
+      </div>
+      <div>
+        <div class="sub-section-title">Tunnel Score</div>
+        ${renderTunnelScoresForPitch(pitch)}
+      </div>
+    </div>`;
+    container.appendChild(card);
+  });
+  updateLegend();
+}
+
+function metricPair(id,nowField,targetField,label,tipId,isText=false){
+  const p=pitches.find(p=>p.id===id);
+  const tips={
+    mphtip:'Average pitch velocity. 4-seam MLB avg: ~94 mph. Every mph gained increases perceived difficulty.',
+    spintip:'Revolutions per minute. Higher spin generally = more movement. 4-seam avg ~2268 rpm. Context matters — spin efficiency is key.',
+    axistip:'Clock-face direction of spin axis. 12:00 = pure backspin (rise). 6:00 = topspin (drop). 3:00 = pure sidespin (horizontal). Determines movement direction.',
+    exttip:'Distance toward home plate at release. Higher extension = perceived velocity increase. MLB avg ~6.2 ft. Each 0.1ft ≈ 0.5 mph perceived.',
+    hbtip:'Horizontal break in inches vs. no-spin baseline. Positive = arm side (right for RHP). Negative = glove side. Determines left-right movement.',
+    ivbtip:'Induced vertical break — movement vs. gravity alone. Positive = ride (fights gravity). Negative = drop (adds to gravity). Key for vertical arsenal separation.',
+  };
+  const inputType=isText?'text':'number';
+  return `<div class="metric-row">
+    <div class="field-label">${label}
+      ${tips[tipId]?`<span class="tooltip-icon">?<span class="tooltip-popup">${tips[tipId]}</span></span>`:''}
+    </div>
+    <div class="metric-with-target">
+      <div>
+        <input type="${inputType}" ${isText?'':'step="0.1"'} placeholder="Current" value="${escH(p?p[nowField]:'')}"
+          oninput="updateField(${id},'${nowField}',this.value)">
+        <div class="metric-sub">current</div>
+      </div>
+      <div>
+        <input type="${inputType}" ${isText?'':'step="0.1"'} placeholder="Target" value="${escH(p?p[targetField]:'')}"
+          oninput="updateField(${id},'${targetField}',this.value)">
+        <div class="metric-sub">target</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function benchmarkSection(pitch,bm){
+  const metrics=[
+    {key:'veloNow',bmKey:'velo',label:'Velo',unit:'mph'},
+    {key:'spinNow',bmKey:'spin',label:'Spin',unit:'rpm'},
+    {key:'hbNow',bmKey:'hb',label:'HB',unit:'"'},
+    {key:'ivbNow',bmKey:'ivb',label:'IVB',unit:'"'},
+  ];
+  let html=`<div class="benchmark-wrap"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--accent3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">vs MLB Avg</div>`;
+  metrics.forEach(m=>{
+    const val=parseFloat(pitch[m.key]);
+    const avg=bm[m.bmKey];
+    if(isNaN(val))return;
+    const diff=val-avg;
+    const pct=Math.min(Math.abs(val)/Math.max(Math.abs(avg)*1.5,1)*100,100);
+    const diffStr=(diff>=0?'+':'')+diff.toFixed(1)+m.unit;
+    const diffClass=Math.abs(diff)<1?'diff-neu':diff>0?'diff-pos':'diff-neg';
+    html+=`<div class="benchmark-row">
+      <span class="benchmark-label">${m.label}</span>
+      <div class="benchmark-bar-track">
+        <div class="benchmark-bar-fill" style="width:${pct}%;background:${PITCH_COLORS[pitch.colorIdx%PITCH_COLORS.length]}88"></div>
+        <div class="benchmark-marker" style="left:${Math.min(Math.abs(avg)/Math.max(Math.abs(avg)*1.5,1)*100,100)}%"></div>
+      </div>
+      <span class="benchmark-diff ${diffClass}">${diffStr}</span>
+    </div>`;
+  });
+  html+=`<div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dimmer);margin-top:4px">│ = MLB avg</div></div>`;
+  return html;
+}
+
+function renderTunnelScoresForPitch(pitch){
+  if(pitches.length<2)return`<p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">Add 2+ pitches to see tunnel scores.</p>`;
+  const hb1=parseFloat(pitch.hbNow),ivb1=parseFloat(pitch.ivbNow);
+  if(isNaN(hb1)||isNaN(ivb1))return`<p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">Enter HB + IVB to calculate.</p>`;
+  let html='';
+  pitches.forEach(p2=>{
+    if(p2.id===pitch.id)return;
+    const hb2=parseFloat(p2.hbNow),ivb2=parseFloat(p2.ivbNow);
+    if(isNaN(hb2)||isNaN(ivb2))return;
+    const score=calcTunnelScore(hb1,ivb1,hb2,ivb2);
+    const cls=score>=80?'ts-great':score>=60?'ts-good':'ts-poor';
+    const label=score>=80?'Elite':score>=60?'Solid':'Needs Work';
+    html+=`<div style="margin-bottom:8px">
+      <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">vs ${escH(p2.name)}</div>
+      <span class="tunnel-score-badge ${cls}">${score} — ${label}</span>
+    </div>`;
+  });
+  return html||`<p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">No comparable pitches with data.</p>`;
+}
+
+function calcTunnelScore(hb1,ivb1,hb2,ivb2){
+  const hbDiff=Math.abs(hb1-hb2),ivbDiff=Math.abs(ivb1-ivb2);
+  const totalDiff=Math.sqrt(hbDiff*hbDiff+ivbDiff*ivbDiff);
+  // Sweet spot: want some separation (>6in total) but not obvious (tunnels well if diff 8–20in)
+  // Score based on: 0 diff = pitches are identical (bad), huge diff without speed diff = telegraphed
+  if(totalDiff<2)return 30; // too similar — no deception
+  if(totalDiff>30)return 40; // too different — likely telegraphed early
+  // Ideal range 8–20 inches total movement differential
+  const idealScore=100-Math.abs(totalDiff-14)*3;
+  return Math.max(20,Math.min(95,Math.round(idealScore)));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ANALYSIS TAB
+// ═══════════════════════════════════════════════════════════════
+function updateAnalysis(){
+  updateRecommender();
+  updateBenchmarks();
+}
+
+function updateRecommender(){
+  const el=document.getElementById('recommenderOutput');
+  const hand=document.getElementById('throws').value||'RHP';
+  if(!pitches.length){
+    el.innerHTML=`<div class="no-recommend">Build your arsenal on the Arsenal tab to get recommendations.</div>`;
+    return;
+  }
+  const triggered=RECOMMEND_RULES.filter(r=>r.check(pitches,hand));
+  if(!triggered.length){
+    el.innerHTML=`<div class="no-recommend" style="color:var(--green)">✓ Arsenal looks well-rounded. Consider refining existing pitches before adding new ones.</div>`;
+    return;
+  }
+  el.innerHTML=`<div class="recommend-grid">${triggered.map(r=>`
+    <div class="recommend-card">
+      <h4>+ ${r.pitch}</h4>
+      <p>${r.reason}</p>
+      <div class="why"><strong>Benefit:</strong> ${r.benefit}</div>
+    </div>`).join('')}</div>`;
+}
+
+function updateBenchmarks(){
+  const el=document.getElementById('benchmarkOutput');
+  const withType=pitches.filter(p=>p.type&&MLB_BENCHMARKS[p.type]);
+  if(!withType.length){
+    el.innerHTML=`<div class="no-recommend">Select a pitch type and enter data to compare against MLB averages.</div>`;
+    return;
+  }
+  const rows=withType.map(p=>{
+    const bm=MLB_BENCHMARKS[p.type];
+    const color=PITCH_COLORS[p.colorIdx%PITCH_COLORS.length];
+    const fields=[
+      {label:'Velocity',cur:p.veloNow,avg:bm.velo,unit:'mph'},
+      {label:'Spin Rate',cur:p.spinNow,avg:bm.spin,unit:'rpm'},
+      {label:'Horiz. Break',cur:p.hbNow,avg:bm.hb,unit:'"'},
+      {label:'IVB',cur:p.ivbNow,avg:bm.ivb,unit:'"'},
+      {label:'Extension',cur:p.extNow,avg:bm.ext,unit:'ft'},
+    ];
+    const dataRows=fields.map(f=>{
+      const v=parseFloat(f.cur);
+      if(isNaN(v))return`<td colspan="3" style="color:var(--text-dimmer);font-family:'DM Mono',monospace;font-size:10px;padding:7px 12px">No data</td>`;
+      const diff=v-f.avg,cls=Math.abs(diff)<f.avg*0.02?'diff-neu':diff>0?'diff-pos':'diff-neg';
+      const diffStr=(diff>=0?'+':'')+diff.toFixed(1)+f.unit;
+      return`<td style="padding:7px 12px;font-size:12px">${v}${f.unit}</td>
+        <td style="padding:7px 12px;color:var(--text-dim);font-size:12px">${f.avg}${f.unit}</td>
+        <td style="padding:7px 12px" class="${cls}">${diffStr}</td>`;
+    });
+    return`<tr style="background:var(--surface2)">
+      <td colspan="4" style="padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase">
+        <span style="color:${color};margin-right:8px">⬤</span>${escH(p.name)} — ${p.type}
+      </td></tr>
+    <tr style="background:var(--surface2);color:var(--text-dimmer)">
+      <th style="padding:6px 12px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;text-align:left">Metric</th>
+      <th style="padding:6px 12px;font-family:'DM Mono',monospace;font-size:9px;text-align:left">Yours</th>
+      <th style="padding:6px 12px;font-family:'DM Mono',monospace;font-size:9px;text-align:left">MLB Avg</th>
+      <th style="padding:6px 12px;font-family:'DM Mono',monospace;font-size:9px;text-align:left">Diff</th>
+    </tr>
+    ${fields.map((f,i)=>`<tr>
+      <td style="padding:7px 12px;font-size:12px;color:var(--text-dim)">${f.label}</td>
+      ${dataRows[i]}
+    </tr>`).join('')}`;
+  });
+  el.innerHTML=`<table class="tunnel-table"><tbody>${rows.join('<tr><td colspan="4" style="height:8px;background:var(--bg)"></td></tr>')}</tbody></table>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PLATOON
+// ═══════════════════════════════════════════════════════════════
+const PLATOON_RATINGS={
+  'RHP':{
+    '4-Seam FB':    {RHH:{r:72,l:62},LHH:{r:65,l:70}},
+    '2-Seam / Sinker':{RHH:{r:78,l:55},LHH:{r:50,l:65}},
+    'Cut Fastball': {RHH:{r:68,l:62},LHH:{r:72,l:60}},
+    'Changeup':     {RHH:{r:60,l:55},LHH:{r:78,l:72}},
+    'Circle Change':{RHH:{r:58,l:52},LHH:{r:80,l:74}},
+    'Splitter':     {RHH:{r:70,l:65},LHH:{r:68,l:70}},
+    'Slider':       {RHH:{r:78,l:68},LHH:{r:48,l:55}},
+    'Sweeper':      {RHH:{r:82,l:74},LHH:{r:42,l:50}},
+    'Curveball':    {RHH:{r:72,l:70},LHH:{r:65,l:62}},
+    'Slurve':       {RHH:{r:75,l:68},LHH:{r:55,l:58}},
+    'Knuckle Curve':{RHH:{r:72,l:68},LHH:{r:63,l:60}},
+  },
+  'LHP':{
+    '4-Seam FB':    {RHH:{r:65,l:70},LHH:{r:72,l:62}},
+    '2-Seam / Sinker':{RHH:{r:50,l:65},LHH:{r:78,l:55}},
+    'Cut Fastball': {RHH:{r:72,l:60},LHH:{r:68,l:62}},
+    'Changeup':     {RHH:{r:78,l:72},LHH:{r:60,l:55}},
+    'Circle Change':{RHH:{r:80,l:74},LHH:{r:58,l:52}},
+    'Splitter':     {RHH:{r:68,l:70},LHH:{r:70,l:65}},
+    'Slider':       {RHH:{r:48,l:55},LHH:{r:78,l:68}},
+    'Sweeper':      {RHH:{r:42,l:50},LHH:{r:82,l:74}},
+    'Curveball':    {RHH:{r:65,l:62},LHH:{r:72,l:70}},
+    'Slurve':       {RHH:{r:55,l:58},LHH:{r:75,l:68}},
+    'Knuckle Curve':{RHH:{r:63,l:60},LHH:{r:72,l:68}},
+  }
+};
+
+function updatePlatoon(){
+  const el=document.getElementById('platoonOutput');
+  const hand=document.getElementById('throws').value||'RHP';
+  const validPitches=pitches.filter(p=>p.type&&PLATOON_RATINGS[hand]&&PLATOON_RATINGS[hand][p.type]);
+  if(!validPitches.length){
+    el.innerHTML=`
+      <div class="platoon-card"><h4>vs. Right-Handed Hitters</h4><p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">Select pitch types to see platoon ratings.</p></div>
+      <div class="platoon-card"><h4>vs. Left-Handed Hitters</h4><p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">Select pitch types to see platoon ratings.</p></div>`;
+    return;
+  }
+  const makeCol=(side,key)=>{
+    const rows=validPitches.map(p=>{
+      const rating=PLATOON_RATINGS[hand][p.type][side][key];
+      const color=PITCH_COLORS[p.colorIdx%PITCH_COLORS.length];
+      const ratingCls=rating>=70?'platoon-good':rating>=55?'platoon-ok':'platoon-bad';
+      const label=rating>=70?'Favorable':rating>=55?'Neutral':'Vulnerable';
+      return`<div class="platoon-pitch-row">
+        <div class="platoon-pitch-name"><span style="color:${color}">⬤</span> ${escH(p.name)}</div>
+        <div class="platoon-bar-track"><div class="platoon-bar-fill" style="width:${rating}%;background:${color}88"></div></div>
+        <div class="platoon-rating ${ratingCls}">${rating} — ${label}</div>
+      </div>`;
+    }).join('');
+    return`<p style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dimmer);margin-bottom:10px;text-transform:uppercase;letter-spacing:.1em">${key==='r'?'Run Value':'Whiff %'} estimate</p>${rows}`;
+  };
+  el.innerHTML=`
+    <div class="platoon-card">
+      <h4>vs. Right-Handed Hitters</h4>
+      ${makeCol('RHH','r')}
+    </div>
+    <div class="platoon-card">
+      <h4>vs. Left-Handed Hitters</h4>
+      ${makeCol('LHH','r')}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TUNNEL TABLE
+// ═══════════════════════════════════════════════════════════════
+function updateTunnelTable(){
+  const el=document.getElementById('tunnelTableWrap');
+  const withData=pitches.filter(p=>!isNaN(parseFloat(p.hbNow))&&!isNaN(parseFloat(p.ivbNow)));
+  if(withData.length<2){
+    el.innerHTML=`<div class="no-recommend">Add at least 2 pitches with HB + IVB data to generate tunnel scores.</div>`;
+    return;
+  }
+  let rows='';
+  for(let i=0;i<withData.length;i++){
+    for(let j=i+1;j<withData.length;j++){
+      const p1=withData[i],p2=withData[j];
+      const hb1=parseFloat(p1.hbNow),ivb1=parseFloat(p1.ivbNow);
+      const hb2=parseFloat(p2.hbNow),ivb2=parseFloat(p2.ivbNow);
+      const score=calcTunnelScore(hb1,ivb1,hb2,ivb2);
+      const cls=score>=80?'ts-great':score>=60?'ts-good':'ts-poor';
+      const label=score>=80?'Elite tunnel — these pitches look nearly identical until the decision point':
+                  score>=60?'Solid tunnel — some divergence early but usable pairing':
+                  'Weak tunnel — consider adjusting release point or movement profile';
+      const c1=PITCH_COLORS[p1.colorIdx%PITCH_COLORS.length];
+      const c2=PITCH_COLORS[p2.colorIdx%PITCH_COLORS.length];
+      const hbDiff=Math.abs(hb1-hb2).toFixed(1),ivbDiff=Math.abs(ivb1-ivb2).toFixed(1);
+      rows+=`<tr>
+        <td><span style="color:${c1}">⬤</span> ${escH(p1.name)}</td>
+        <td><span style="color:${c2}">⬤</span> ${escH(p2.name)}</td>
+        <td>${hbDiff}"</td><td>${ivbDiff}"</td>
+        <td><span class="tunnel-score-badge ${cls}">${score}</span></td>
+        <td style="font-size:11px;color:var(--text-dim)">${label}</td>
+      </tr>`;
+    }
+  }
+  el.innerHTML=`<table class="tunnel-table">
+    <thead><tr>
+      <th>Pitch 1</th><th>Pitch 2</th>
+      <th>HB Δ</th><th>IVB Δ</th>
+      <th>Tunnel Score</th><th>Assessment</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MOVEMENT PLOT
+// ═══════════════════════════════════════════════════════════════
+function drawPlot(){
+  const canvas=document.getElementById('movementCanvas');
+  const dpr=window.devicePixelRatio||1;
+  const size=canvas.offsetWidth||360;
+  canvas.width=size*dpr;canvas.height=size*dpr;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const W=size,H=size,cx=W/2,cy=H/2,scale=(W*.42)/25;
+  ctx.fillStyle='#111318';ctx.fillRect(0,0,W,H);
+  [5,10,15,20,25].forEach(r=>{
+    ctx.beginPath();ctx.arc(cx,cy,r*scale,0,Math.PI*2);
+    ctx.strokeStyle=r===10?'#2a2d38':'#1e2028';ctx.lineWidth=r===10?1.5:1;ctx.stroke();
+  });
+  ctx.strokeStyle='#2a2d38';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  ctx.fillStyle='#454a5a';ctx.font='9px DM Mono,monospace';ctx.textAlign='center';
+  ctx.fillText('ARM+',cx+20*scale,cy-6);
+  ctx.fillText('GLOVE−',cx-20*scale,cy-6);
+  ctx.fillText('RIDE+',cx+4,cy-20*scale);
+  ctx.fillText('DROP−',cx+4,cy+20*scale+10);
+  pitches.forEach(pitch=>{
+    const hb=parseFloat(pitch.hbNow),ivb=parseFloat(pitch.ivbNow);
+    if(isNaN(hb)||isNaN(ivb))return;
+    const px=cx+hb*scale,py=cy-ivb*scale;
+    const color=PITCH_COLORS[pitch.colorIdx%PITCH_COLORS.length];
+    const grad=ctx.createRadialGradient(px,py,0,px,py,18);
+    grad.addColorStop(0,color+'44');grad.addColorStop(1,'transparent');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(px,py,18,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);
+    ctx.fillStyle=color;ctx.fill();
+    ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font='bold 8px DM Sans,sans-serif';ctx.textAlign='center';
+    ctx.fillText(pitch.name.slice(0,8),px,py+19);
+  });
+}
+
+function updateLegend(){
+  const legend=document.getElementById('canvasLegend');
+  legend.innerHTML=pitches.map(p=>{
+    const color=PITCH_COLORS[p.colorIdx%PITCH_COLORS.length];
+    return`<div class="legend-item"><div class="legend-dot" style="background:${color}"></div>${escH(p.name)}</div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SUMMARY
+// ═══════════════════════════════════════════════════════════════
+function updateSummary(){
+  document.getElementById('sumTotal').textContent=pitches.length||'0';
+  const velos=pitches.map(p=>parseFloat(p.veloNow)).filter(v=>!isNaN(v));
+  if(velos.length){
+    document.getElementById('sumVelo').textContent=(velos.reduce((a,b)=>a+b,0)/velos.length).toFixed(1);
+    document.getElementById('sumRange').textContent=`${Math.min(...velos).toFixed(0)}–${Math.max(...velos).toFixed(0)}`;
+  } else {
+    document.getElementById('sumVelo').textContent='—';
+    document.getElementById('sumRange').textContent='—';
+  }
+  const usages=pitches.map(p=>parseFloat(p.usage)).filter(v=>!isNaN(v));
+  document.getElementById('sumUsage').textContent=usages.reduce((a,b)=>a+b,0)+'%';
+  const spins=pitches.map(p=>parseFloat(p.spinNow)).filter(v=>!isNaN(v));
+  document.getElementById('sumSpin').textContent=spins.length?Math.round(spins.reduce((a,b)=>a+b,0)/spins.length):'—';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BEFORE / AFTER
+// ═══════════════════════════════════════════════════════════════
+function updateBeforeAfterCurrent(){
+  const el=document.getElementById('afterContent');
+  if(!pitches.length){el.innerHTML=`<p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">No current arsenal data.</p>`;return;}
+  el.innerHTML=pitches.map(p=>{
+    const color=PITCH_COLORS[p.colorIdx%PITCH_COLORS.length];
+    return`<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;margin-bottom:6px"><span style="color:${color}">⬤</span> ${escH(p.name)} ${p.type?'— '+p.type:''}</div>
+      ${p.veloNow?`<div class="ba-diff-row"><span class="ba-label">Velocity</span><span class="ba-val">${p.veloNow} mph</span></div>`:''}
+      ${p.spinNow?`<div class="ba-diff-row"><span class="ba-label">Spin Rate</span><span class="ba-val">${p.spinNow} rpm</span></div>`:''}
+      ${p.hbNow?`<div class="ba-diff-row"><span class="ba-label">Horiz. Break</span><span class="ba-val">${p.hbNow}"</span></div>`:''}
+      ${p.ivbNow?`<div class="ba-diff-row"><span class="ba-label">IVB</span><span class="ba-val">${p.ivbNow}"</span></div>`:''}
+      ${p.grade?`<div class="ba-diff-row"><span class="ba-label">Grade</span><span class="ba-val">${p.grade}</span></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function loadBeforeFromURL(){
+  const urlInput=document.getElementById('beforeDate');
+  const raw=urlInput.value.trim();
+  if(!raw){showToast('Paste a share URL into the date field first.','warn');return;}
+  try{
+    const urlStr=raw.includes('?')?raw:'http://x.com/?'+raw;
+    const url=new URL(urlStr);
+    const d=url.searchParams.get('d');
+    if(!d){showToast('No pitch data found in this URL.','warn');return;}
+    const data=JSON.parse(decodeURIComponent(d));
+    if(data.pitches&&data.pitches.length){
+      beforeSnapshot=data;
+      renderBeforeSnapshot();
+      showToast('Before snapshot loaded!','ok');
+    } else {
+      showToast('No valid pitch data found in URL.','warn');
+    }
+  } catch(e){showToast('Could not parse URL. Generate a fresh share link from Arsenal tab.','warn');}
+}
+
+function renderBeforeSnapshot(){
+  const el=document.getElementById('beforeContent');
+  if(!beforeSnapshot||!beforeSnapshot.pitches.length){
+    el.innerHTML=`<p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">No before data loaded.</p>`;
+    return;
+  }
+  el.innerHTML=beforeSnapshot.pitches.map((p,i)=>{
+    const color=PITCH_COLORS[i%PITCH_COLORS.length];
+    // Compare with current
+    const curr=pitches.find(c=>c.name===p.name||c.type===p.type);
+    const diffRow=(label,bv,cv,unit='')=>{
+      if(!bv)return'';
+      const b=parseFloat(bv),c=curr?parseFloat(curr[cv]):NaN;
+      const diff=!isNaN(b)&&!isNaN(c)?c-b:null;
+      const arrow=diff===null?'':diff>0.2?'↑':diff<-0.2?'↓':'→';
+      const aColor=diff===null?'var(--text-dimmer)':diff>0.2?'var(--green)':diff<-0.2?'var(--red)':'var(--text-dim)';
+      return`<div class="ba-diff-row">
+        <span class="ba-label">${label}</span>
+        <span class="ba-val">${bv}${unit}</span>
+        <span class="ba-arrow" style="color:${aColor}">${arrow}${diff!==null?` ${diff>0?'+':''}${diff.toFixed(1)}${unit}`:''}</span>
+      </div>`;
+    };
+    return`<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;margin-bottom:6px"><span style="color:${color}">⬤</span> ${escH(p.name)}</div>
+      ${diffRow('Velocity',p.veloNow,'veloNow',' mph')}
+      ${diffRow('Spin Rate',p.spinNow,'spinNow',' rpm')}
+      ${diffRow('HB',p.hbNow,'hbNow','"')}
+      ${diffRow('IVB',p.ivbNow,'ivbNow','"')}
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SHARE / URL
+// ═══════════════════════════════════════════════════════════════
+function serializeState(){
+  const state={
+    info:{
+      name:document.getElementById('pitcherName').value,
+      throws:document.getElementById('throws').value,
+      role:document.getElementById('role').value,
+      level:document.getElementById('level').value,
+      season:document.getElementById('season').value,
+      source:document.getElementById('dataSource').value,
+      coach:document.getElementById('coach').value,
+    },
+    pitches:pitches.map(p=>({
+      name:p.name,type:p.type,colorIdx:p.colorIdx,
+      veloNow:p.veloNow,veloTarget:p.veloTarget,
+      spinNow:p.spinNow,spinTarget:p.spinTarget,
+      axisNow:p.axisNow,hbNow:p.hbNow,ivbNow:p.ivbNow,
+      extNow:p.extNow,usage:p.usage,grade:p.grade,
+      gripNotes:p.gripNotes,designNotes:p.designNotes||'',
+    }))
+  };
+  return encodeURIComponent(JSON.stringify(state));
+}
+
+function shareURL(){
+  const bar=document.getElementById('shareBar');
+  const urlEl=document.getElementById('shareURL');
+  const data=serializeState();
+  const url=`${window.location.href.split('?')[0]}?d=${data}`;
+  urlEl.textContent=url;
+  bar.style.display='flex';
+}
+
+function copyURL(){
+  const url=document.getElementById('shareURL').textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>{
+      const s=document.getElementById('copySuccess');
+      s.style.display='inline';
+      setTimeout(()=>s.style.display='none',2000);
+    }).catch(()=>fallbackCopy(url));
+  } else {fallbackCopy(url);}
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');showToast('Copied!','ok');}
+  catch(e){showToast('Copy failed — select the URL manually.','warn');}
+  document.body.removeChild(ta);
+}
+function showToast(msg,type='ok'){
+  const t=document.createElement('div');
+  t.textContent=type==='ok'?'✓ '+msg:'⚠ '+msg;
+  const bg=type==='ok'?'var(--green)':'var(--yellow)';
+  const fg=type==='ok'?'#000':'#000';
+  t.style.cssText=`position:fixed;bottom:24px;right:24px;background:${bg};color:${fg};padding:10px 18px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4)`;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},2500);
+}
+
+function loadFromURL(){
+  try{
+    const params=new URLSearchParams(window.location.search);
+    const d=params.get('d');
+    if(!d)return;
+    const state=JSON.parse(decodeURIComponent(d));
+    if(state.info){
+      const map={name:'pitcherName',throws:'throws',role:'role',level:'level',season:'season',source:'dataSource',coach:'coach'};
+      Object.entries(map).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&state.info[k])el.value=state.info[k];});
+    }
+    if(state.pitches){
+      pitches=[];
+      state.pitches.forEach(p=>addPitch({...p,id:Date.now()+Math.random(),collapsed:false}));
+    }
+  } catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CASE STUDIES
+// ═══════════════════════════════════════════════════════════════
+function loadCaseStudy(key){
+  if(!key)return;
+  const cs=CASE_STUDIES[key];
+  if(!cs)return;
+  pitches=[];pidCounter=0;
+  document.getElementById('pitcherName').value=cs.name;
+  document.getElementById('throws').value=cs.throws;
+  document.getElementById('role').value=cs.role;
+  document.getElementById('level').value=cs.level;
+  document.getElementById('season').value=cs.season;
+  document.getElementById('dataSource').value=cs.dataSource;
+  document.getElementById('coach').value='';
+  document.getElementById('weakness').value='';
+  cs.pitches.forEach((p,i)=>{
+    const pid=++pidCounter;
+    pitches.push({
+      id:pid,colorIdx:i,collapsed:false,
+      name:p.name||'Pitch '+(i+1),type:p.type||'',
+      veloNow:p.veloNow||'',veloTarget:'',
+      spinNow:p.spinNow||'',spinTarget:'',
+      axisNow:p.axisNow||'',axisTarget:'',
+      hbNow:p.hbNow||'',hbTarget:'',
+      ivbNow:p.ivbNow||'',ivbTarget:'',
+      extNow:p.extNow||'',extTarget:'',
+      usage:p.usage||'',grade:p.grade||'',
+      gripNotes:'',designNotes:'',tunnelPartner:'',
+    });
+  });
+  const sel=document.querySelector('.case-study-bar select');
+  if(sel)sel.value='';
+  refresh();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GRIP LIBRARY
+// ═══════════════════════════════════════════════════════════════
+function renderGripLibrary(){
+  const el=document.getElementById('gripGrid');
+  const catColors={'Fastball':PITCH_COLORS[0],'Offspeed':PITCH_COLORS[3],'Breaking Ball':PITCH_COLORS[1]};
+  el.innerHTML=GRIPS.map(g=>`
+    <div class="grip-card" onclick="copyGripInfo('${escH(g.axis)}','${escH(g.spin)}')">
+      <div class="grip-type" style="color:${catColors[g.cat]||'var(--accent)'}">${g.cat}</div>
+      <h4>${g.name}</h4>
+      <p>${g.desc}</p>
+      <p style="margin-top:8px;font-style:italic;font-size:11px;color:var(--accent4)">"${g.cue}"</p>
+      <div class="grip-stat">
+        <span>Axis <span>${g.axis}</span></span>
+        <span>Spin <span>${g.spin}</span></span>
+      </div>
+      <div class="grip-stat">
+        <span>IVB <span>${g.ivb}</span></span>
+        <span>HB <span>${g.hb}</span></span>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dimmer);margin-top:8px;text-align:center">Click to copy stats</div>
+    </div>`).join('');
+}
+
+function copyGripInfo(axis,spin){
+  const txt=`Axis: ${axis} | Spin: ${spin}`;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>showToast('Grip stats copied!','ok')).catch(()=>showToast(txt,'ok'));
+  } else {
+    showToast(txt,'ok');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════════
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const ids=['arsenal','analysis','platoon','tunnel','scouting','grips','beforeafter'];
+    t.classList.toggle('active',ids[i]===id);
+  });
+  document.querySelectorAll('.tab-content').forEach(c=>{
+    c.classList.toggle('active',c.id==='tab-'+id);
+  });
+  if(id==='analysis')updateAnalysis();
+  if(id==='platoon')updatePlatoon();
+  if(id==='tunnel')updateTunnelTable();
+  if(id==='beforeafter')updateBeforeAfterCurrent();
+  setTimeout(drawPlot,50);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function clearAll(){
+  pitches=[];pidCounter=0;
+  ['pitcherName','throws','role','level','season','dataSource','coach','weakness',
+   'strengths','priorities','platoon','actionPlan','platoonNotes',
+   'seqEarly','seqHitter','seqPitcher','seqEven','progressNotes'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('shareBar').style.display='none';
+  refresh();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+window.addEventListener('load',()=>{
+  renderGripLibrary();
+  loadFromURL();
+  if(!pitches.length){addPitch();addPitch();addPitch();}
+  setTimeout(drawPlot,100);
+});
+window.addEventListener('resize',()=>setTimeout(drawPlot,80));
+
+// ═══════════════════════════════════════════════════════════════
+// PRINT REPORT — downloads a standalone HTML file
+// ═══════════════════════════════════════════════════════════════
+function printReport(){
+  const info = {
+    name:    document.getElementById('pitcherName').value || 'Unnamed Pitcher',
+    throws:  document.getElementById('throws').value || '—',
+    role:    document.getElementById('role').value || '—',
+    level:   document.getElementById('level').value || '—',
+    season:  document.getElementById('season').value || '—',
+    coach:   document.getElementById('coach').value || '—',
+    source:  document.getElementById('dataSource').value || '—',
+    weakness:document.getElementById('weakness').value || '—',
+  };
+
+  const strengths    = document.getElementById('strengths')?.value    || '';
+  const priorities   = document.getElementById('priorities')?.value   || '';
+  const actionPlan   = document.getElementById('actionPlan')?.value   || '';
+  const platoonNotes = document.getElementById('platoonNotes')?.value || '';
+  const seqEarly     = document.getElementById('seqEarly')?.value     || '';
+  const seqPitcher   = document.getElementById('seqPitcher')?.value   || '';
+
+  // Canvas snapshot as data URL
+  const canvas = document.getElementById('movementCanvas');
+  const canvasImg = canvas ? canvas.toDataURL('image/png') : '';
+
+  // Pitch rows
+  const pitchRows = pitches.map(p => {
+    const color = PITCH_COLORS[p.colorIdx % PITCH_COLORS.length];
+    const bm = MLB_BENCHMARKS[p.type] || null;
+    const fmt = (val, avg, dec=1) => {
+      if(!val || !bm || isNaN(parseFloat(val))) return '';
+      const d = parseFloat(val) - avg;
+      const s = (d>=0?'+':'')+d.toFixed(dec);
+      const c = Math.abs(d)<0.5?'#888':d>0?'#66bb6a':'#ef5350';
+      return `<br><small style="color:${c}">${s} vs MLB</small>`;
+    };
+    return `<tr>
+      <td><span style="color:${color}">&#9679;</span> <strong>${p.name}</strong><br><small style="color:#888">${p.type||'—'}</small></td>
+      <td>${p.veloNow||'—'}${fmt(p.veloNow,bm?.velo)}</td>
+      <td>${p.spinNow||'—'}${fmt(p.spinNow,bm?.spin,0)}</td>
+      <td>${p.axisNow||'—'}</td>
+      <td>${p.hbNow||'—'}${fmt(p.hbNow,bm?.hb)}</td>
+      <td>${p.ivbNow||'—'}${fmt(p.ivbNow,bm?.ivb)}</td>
+      <td>${p.extNow||'—'}</td>
+      <td>${p.usage||'—'}${p.usage?'%':''}</td>
+      <td>${p.grade||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  // Tunnel rows
+  const withData = pitches.filter(p=>!isNaN(parseFloat(p.hbNow))&&!isNaN(parseFloat(p.ivbNow)));
+  let tunnelRows='';
+  for(let i=0;i<withData.length;i++){
+    for(let j=i+1;j<withData.length;j++){
+      const p1=withData[i],p2=withData[j];
+      const score=calcTunnelScore(parseFloat(p1.hbNow),parseFloat(p1.ivbNow),parseFloat(p2.hbNow),parseFloat(p2.ivbNow));
+      const label=score>=80?'Elite':score>=60?'Solid':'Needs Work';
+      const sc=score>=80?'#66bb6a':score>=60?'#ffca28':'#ef5350';
+      tunnelRows+=`<tr><td>${p1.name}</td><td>${p2.name}</td><td style="color:${sc};font-weight:700">${score} — ${label}</td></tr>`;
+    }
+  }
+
+  // Recs
+  const hand = document.getElementById('throws').value || 'RHP';
+  const recs = RECOMMEND_RULES.filter(r=>r.check(pitches,hand));
+  const recHTML = recs.length
+    ? recs.map(r=>`<div style="margin-bottom:10px;padding:8px 12px;background:#181b22;border-left:3px solid #ffb74d;border-radius:0 4px 4px 0">
+        <strong style="color:#ffb74d">${r.pitch}</strong><br>
+        <span style="font-size:11px;color:#bbb">${r.reason}</span>
+      </div>`).join('')
+    : '<p style="color:#66bb6a">&#10003; Arsenal looks well-rounded.</p>';
+
+  const noteBlock = (title, text) => !text ? '' : `
+    <div style="background:#111318;border:1px solid #252830;border-radius:6px;padding:14px;margin-bottom:12px">
+      <div style="font-family:monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#4fc3f7;margin-bottom:6px">${title}</div>
+      <div style="font-size:11px;color:#aaa;line-height:1.7;white-space:pre-wrap">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>`;
+
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+  const reportHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pitch Design Report — ${info.name}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#0a0c10;color:#e8eaf0;font-family:Arial,sans-serif;font-size:12px;padding:36px 40px}
+  h1{font-size:38px;font-weight:900;letter-spacing:.02em;line-height:.95;margin-bottom:4px}
+  h1 span{color:#4fc3f7}
+  h2{font-size:17px;font-weight:700;letter-spacing:.04em;margin:22px 0 10px;text-transform:uppercase}
+  small{font-size:9px}
+  .eyebrow{font-family:monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#4fc3f7;margin-bottom:4px}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:2px solid #252830;margin-bottom:18px}
+  .header-right{text-align:right;font-family:monospace;font-size:10px;color:#7a8094;line-height:1.9}
+  .header-right strong{color:#e8eaf0;font-size:13px}
+  .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+  .meta-card{background:#111318;border:1px solid #252830;border-radius:6px;padding:10px 12px}
+  .meta-lbl{font-family:monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#454a5a;margin-bottom:3px}
+  .meta-val{font-size:13px;font-weight:700}
+  table{width:100%;border-collapse:collapse;margin-bottom:16px}
+  th{font-family:monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#7a8094;padding:8px 10px;text-align:left;background:#111318;border-bottom:1px solid #252830}
+  td{padding:9px 10px;border-bottom:1px solid #1a1d24;vertical-align:top;line-height:1.4}
+  tr:nth-child(even) td{background:#0e1018}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .box{background:#111318;border:1px solid #252830;border-radius:8px;padding:14px}
+  .notes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .footer{margin-top:24px;padding-top:12px;border-top:1px solid #252830;font-family:monospace;font-size:9px;color:#454a5a;display:flex;justify-content:space-between}
+  .print-btn{display:block;margin:0 auto 28px;background:#4fc3f7;color:#000;border:none;padding:11px 28px;border-radius:4px;font-family:monospace;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.08em;text-transform:uppercase}
+  @media print{.print-btn{display:none!important}}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">&#8984; Save as PDF — use your browser Print dialog</button>
+
+<div class="header">
+  <div>
+    <div class="eyebrow">&#9898; Pitch Design Worksheet &nbsp;·&nbsp; @SebThrows</div>
+    <h1>PITCH<span>DESIGN</span><br>REPORT</h1>
+  </div>
+  <div class="header-right">
+    <strong>${info.name}</strong><br>
+    ${info.throws} &middot; ${info.role} &middot; ${info.level}<br>
+    ${info.season}<br>
+    Coach: ${info.coach}<br>
+    Source: ${info.source}
+  </div>
+</div>
+
+<div class="meta">
+  <div class="meta-card"><div class="meta-lbl">Pitcher</div><div class="meta-val">${info.name}</div></div>
+  <div class="meta-card"><div class="meta-lbl">Handedness / Role</div><div class="meta-val">${info.throws} &middot; ${info.role}</div></div>
+  <div class="meta-card"><div class="meta-lbl">Primary Weakness</div><div class="meta-val">${info.weakness}</div></div>
+  <div class="meta-card"><div class="meta-lbl">Arsenal Size</div><div class="meta-val" style="color:#4fc3f7">${pitches.length} pitches</div></div>
+</div>
+
+<h2>Arsenal Profile</h2>
+<div style="background:#111318;border:1px solid #252830;border-radius:8px;overflow:hidden;margin-bottom:16px">
+<table>
+  <thead><tr><th>Pitch</th><th>Velo</th><th>Spin</th><th>Axis</th><th>HB</th><th>IVB</th><th>Ext</th><th>Usage</th><th>Grade</th></tr></thead>
+  <tbody>${pitchRows||'<tr><td colspan="9" style="text-align:center;color:#454a5a;padding:20px">No pitch data entered</td></tr>'}</tbody>
+</table>
+</div>
+
+<div class="two">
+  <div>
+    <h2>Movement Plot</h2>
+    <div class="box" style="text-align:center">
+      ${canvasImg?`<img src="${canvasImg}" style="max-width:100%;border-radius:4px" alt="Movement plot">`:'<p style="color:#454a5a;padding:20px 0;font-size:11px">No movement data — enter HB + IVB values first</p>'}
+    </div>
+  </div>
+  <div>
+    <h2>Recommendations</h2>
+    <div class="box">${recHTML}</div>
+  </div>
+</div>
+
+${tunnelRows?`<h2>Tunnel Scores</h2>
+<div style="background:#111318;border:1px solid #252830;border-radius:8px;overflow:hidden;margin-bottom:16px">
+<table>
+  <thead><tr><th>Pitch 1</th><th>Pitch 2</th><th>Score &amp; Rating</th></tr></thead>
+  <tbody>${tunnelRows}</tbody>
+</table>
+</div>`:''}
+
+${(strengths||priorities||actionPlan||platoonNotes||seqEarly||seqPitcher)?`
+<h2>Scouting &amp; Development Notes</h2>
+<div class="notes">
+  ${noteBlock('Arsenal Strengths',strengths)}
+  ${noteBlock('Development Priorities',priorities)}
+  ${noteBlock('Action Plan',actionPlan)}
+  ${noteBlock('Platoon Notes',platoonNotes)}
+  ${noteBlock('Early Count Sequencing',seqEarly)}
+  ${noteBlock("Pitcher's Count",seqPitcher)}
+</div>`:''}
+
+<div class="footer">
+  <span>@SebThrows &mdash; Pitch Design Worksheet</span>
+  <span>Generated ${date}</span>
+</div>
+</body></html>`;
+
+  // Download as .html file — works inside iframes, no popup needed
+  const blob = new Blob([reportHTML], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PitchDesign_${info.name.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  showToast('Report downloaded! Open the file and use Ctrl/Cmd+P to save as PDF.','ok');
+}
+
+function closePrintOverlay(){
+  const overlay = document.getElementById('printOverlay');
+  overlay.classList.remove('visible');
+  overlay.innerHTML='';
+}
+
+
+</script>
+</body>
+</html>
