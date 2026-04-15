@@ -1,4 +1,4 @@
-      <div style="font-size:11px;color:#aaa;line-height:1.7;white-space:pre-wrap">${escH(text)}</div>
+<div style="font-size:11px;color:#aaa;line-height:1.7;white-space:pre-wrap">${escH(text)}</div>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -104,7 +104,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 .diff-neg{color:var(--red)}
 .diff-neu{color:var(--text-dim)}
 
-/* TUNNEL SCORE */
+
 .tunnel-score-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500}
 .ts-great{background:rgba(102,187,106,.15);color:var(--green);border:1px solid rgba(102,187,106,.3)}
 .ts-good{background:rgba(255,202,40,.12);color:var(--yellow);border:1px solid rgba(255,202,40,.25)}
@@ -152,7 +152,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 .scouting-block{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
 .scouting-block h3{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;color:var(--accent)}
 
-/* TUNNEL TABLE */
+
 .tunnel-table{width:100%;border-collapse:collapse;font-size:12px}
 .tunnel-table th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dimmer);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--surface2)}
 .tunnel-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
@@ -227,7 +227,6 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
   <div class="tab active" onclick="switchTab('arsenal')">Arsenal Builder</div>
   <div class="tab" onclick="switchTab('analysis')">Analysis & Recommender</div>
   <div class="tab" onclick="switchTab('platoon')">Platoon Splits</div>
-  <div class="tab" onclick="switchTab('tunnel')">Tunneling</div>
   <div class="tab" onclick="switchTab('roster')">&#128101; Roster</div>
   <div class="tab" onclick="switchTab('history')">&#128200; History</div>
   <div class="tab" onclick="switchTab('import')">&#8679; CSV Import</div>
@@ -307,19 +306,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 </div>
 
 <!-- ═══════════════════════════════════════════════ TAB: TUNNELING -->
-<div class="tab-content" id="tab-tunnel">
-  <div class="section-header"><h2>Tunnel Pairs</h2><span class="section-tag">movement divergence analysis</span><div class="section-line"></div></div>
-  <p style="font-size:12px;color:var(--text-dim);margin-bottom:16px;font-family:'DM Mono',monospace">Tunnel score = similarity of movement profiles. Higher = pitches look more alike until the decision point (~23ft). 80+ is elite, 60–79 is solid, below 60 needs work.</p>
-  <div id="tunnelTableWrap"><div class="no-recommend">Add at least 2 pitches with HB + IVB data to generate tunnel scores.</div></div>
 
-  <div class="section-header" style="margin-top:28px"><h2>Sequencing Recommendations</h2><span class="section-tag">count-based approach</span><div class="section-line"></div></div>
-  <div class="scouting-grid">
-    <div class="scouting-block"><h3>Early Count (0-0, 1-0, 0-1)</h3><textarea id="seqEarly" rows="4" placeholder="What do you establish early? What sets up your out pitch?"></textarea></div>
-    <div class="scouting-block"><h3>Hitter's Count (2-0, 3-1)</h3><textarea id="seqHitter" rows="4" placeholder="What's your go-to in a fastball count? How do you attack aggressively?"></textarea></div>
-    <div class="scouting-block"><h3>Pitcher's Count (0-2, 1-2)</h3><textarea id="seqPitcher" rows="4" placeholder="What's your strikeout sequence? Expand or attack?"></textarea></div>
-    <div class="scouting-block"><h3>Even Count (1-1, 2-2)</h3><textarea id="seqEven" rows="4" placeholder="Neutral count approach. What do you default to?"></textarea></div>
-  </div>
-</div>
 
 <!-- ═══════════════════════════════════════════════ TAB: SCOUTING -->
 <!-- ═══════════════════════════════════════════════ TAB: ROSTER -->
@@ -567,7 +554,6 @@ function refresh(){
   drawPlot();
   updateAnalysis();
   updatePlatoon();
-  updateTunnelTable();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -878,10 +864,7 @@ function renderCards(){
             oninput="updateField(${pitch.id},'tunnelPartner',this.value)">
         </div>
       </div>
-      <div>
-        <div class="sub-section-title">Tunnel Score</div>
-        ${renderTunnelScoresForPitch(pitch)}
-      </div>
+
     </div>`;
     container.appendChild(card);
   });
@@ -947,37 +930,6 @@ function benchmarkSection(pitch,bm){
   return html;
 }
 
-function renderTunnelScoresForPitch(pitch){
-  if(pitches.length<2)return`<p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">Add 2+ pitches to see tunnel scores.</p>`;
-  const hb1=parseFloat(pitch.hbNow),ivb1=parseFloat(pitch.ivbNow);
-  if(isNaN(hb1)||isNaN(ivb1))return`<p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">Enter HB + IVB to calculate.</p>`;
-  let html='';
-  pitches.forEach(p2=>{
-    if(p2.id===pitch.id)return;
-    const hb2=parseFloat(p2.hbNow),ivb2=parseFloat(p2.ivbNow);
-    if(isNaN(hb2)||isNaN(ivb2))return;
-    const score=calcTunnelScore(hb1,ivb1,hb2,ivb2);
-    const cls=score>=80?'ts-great':score>=60?'ts-good':'ts-poor';
-    const label=score>=80?'Elite':score>=60?'Solid':'Needs Work';
-    html+=`<div style="margin-bottom:8px">
-      <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px">vs ${escH(p2.name)}</div>
-      <span class="tunnel-score-badge ${cls}">${score} — ${label}</span>
-    </div>`;
-  });
-  return html||`<p style="font-size:11px;color:var(--text-dimmer);font-family:'DM Mono',monospace">No comparable pitches with data.</p>`;
-}
-
-function calcTunnelScore(hb1,ivb1,hb2,ivb2){
-  const hbDiff=Math.abs(hb1-hb2),ivbDiff=Math.abs(ivb1-ivb2);
-  const totalDiff=Math.sqrt(hbDiff*hbDiff+ivbDiff*ivbDiff);
-  // Sweet spot: want some separation (>6in total) but not obvious (tunnels well if diff 8–20in)
-  // Score based on: 0 diff = pitches are identical (bad), huge diff without speed diff = telegraphed
-  if(totalDiff<2)return 30; // too similar — no deception
-  if(totalDiff>30)return 40; // too different — likely telegraphed early
-  // Ideal range 8–20 inches total movement differential
-  const idealScore=100-Math.abs(totalDiff-14)*3;
-  return Math.max(20,Math.min(95,Math.round(idealScore)));
-}
 
 // ═══════════════════════════════════════════════════════════════
 // ANALYSIS TAB
@@ -1121,45 +1073,6 @@ function updatePlatoon(){
 // ═══════════════════════════════════════════════════════════════
 // TUNNEL TABLE
 // ═══════════════════════════════════════════════════════════════
-function updateTunnelTable(){
-  const el=document.getElementById('tunnelTableWrap');
-  const withData=pitches.filter(p=>!isNaN(parseFloat(p.hbNow))&&!isNaN(parseFloat(p.ivbNow)));
-  if(withData.length<2){
-    el.innerHTML=`<div class="no-recommend">Add at least 2 pitches with HB + IVB data to generate tunnel scores.</div>`;
-    return;
-  }
-  let rows='';
-  for(let i=0;i<withData.length;i++){
-    for(let j=i+1;j<withData.length;j++){
-      const p1=withData[i],p2=withData[j];
-      const hb1=parseFloat(p1.hbNow),ivb1=parseFloat(p1.ivbNow);
-      const hb2=parseFloat(p2.hbNow),ivb2=parseFloat(p2.ivbNow);
-      const score=calcTunnelScore(hb1,ivb1,hb2,ivb2);
-      const cls=score>=80?'ts-great':score>=60?'ts-good':'ts-poor';
-      const label=score>=80?'Elite tunnel — these pitches look nearly identical until the decision point':
-                  score>=60?'Solid tunnel — some divergence early but usable pairing':
-                  'Weak tunnel — consider adjusting release point or movement profile';
-      const c1=PITCH_COLORS[p1.colorIdx%PITCH_COLORS.length];
-      const c2=PITCH_COLORS[p2.colorIdx%PITCH_COLORS.length];
-      const hbDiff=Math.abs(hb1-hb2).toFixed(1),ivbDiff=Math.abs(ivb1-ivb2).toFixed(1);
-      rows+=`<tr>
-        <td><span style="color:${c1}">⬤</span> ${escH(p1.name)}</td>
-        <td><span style="color:${c2}">⬤</span> ${escH(p2.name)}</td>
-        <td>${hbDiff}"</td><td>${ivbDiff}"</td>
-        <td><span class="tunnel-score-badge ${cls}">${score}</span></td>
-        <td style="font-size:11px;color:var(--text-dim)">${label}</td>
-      </tr>`;
-    }
-  }
-  el.innerHTML=`<table class="tunnel-table">
-    <thead><tr>
-      <th>Pitch 1</th><th>Pitch 2</th>
-      <th>HB Δ</th><th>IVB Δ</th>
-      <th>Tunnel Score</th><th>Assessment</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
-}
 
 // ═══════════════════════════════════════════════════════════════
 // MOVEMENT PLOT
@@ -1372,8 +1285,7 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 function clearAll(){
   pitches=[];pidCounter=0;
   ['pitcherName','throws','role','level','season','dataSource','coach','weakness',
-   'strengths','priorities','platoon','actionPlan','platoonNotes',
-   'seqEarly','seqHitter','seqPitcher','seqEven','progressNotes'].forEach(id=>{
+   'strengths','priorities','platoon','actionPlan','platoonNotes','progressNotes'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
   document.getElementById('shareBar').style.display='none';
@@ -1413,8 +1325,6 @@ function printReport(){
   const priorities   = document.getElementById('priorities')?.value   || '';
   const actionPlan   = document.getElementById('actionPlan')?.value   || '';
   const platoonNotes = document.getElementById('platoonNotes')?.value || '';
-  const seqEarly     = document.getElementById('seqEarly')?.value     || '';
-  const seqPitcher   = document.getElementById('seqPitcher')?.value   || '';
 
   // Canvas snapshot as data URL
   const canvas = document.getElementById('movementCanvas');
@@ -1444,18 +1354,7 @@ function printReport(){
     </tr>`;
   }).join('');
 
-  // Tunnel rows
-  const withData = pitches.filter(p=>!isNaN(parseFloat(p.hbNow))&&!isNaN(parseFloat(p.ivbNow)));
-  let tunnelRows='';
-  for(let i=0;i<withData.length;i++){
-    for(let j=i+1;j<withData.length;j++){
-      const p1=withData[i],p2=withData[j];
-      const score=calcTunnelScore(parseFloat(p1.hbNow),parseFloat(p1.ivbNow),parseFloat(p2.hbNow),parseFloat(p2.ivbNow));
-      const label=score>=80?'Elite':score>=60?'Solid':'Needs Work';
-      const sc=score>=80?'#66bb6a':score>=60?'#ffca28':'#ef5350';
-      tunnelRows+=`<tr><td>${p1.name}</td><td>${p2.name}</td><td style="color:${sc};font-weight:700">${score} — ${label}</td></tr>`;
-    }
-  }
+
 
   // Recs
   const hand = document.getElementById('throws').value || 'RHP';
@@ -1575,24 +1474,16 @@ function printReport(){
   </div>
 </div>
 
-${tunnelRows?`<h2>Tunnel Scores</h2>
-<div style="background:#111318;border:1px solid #252830;border-radius:8px;overflow:hidden;margin-bottom:16px">
-<table>
-  <thead><tr><th>Pitch 1</th><th>Pitch 2</th><th>Score &amp; Rating</th></tr></thead>
-  <tbody>${tunnelRows}</tbody>
-</table>
-</div>`:''}
-
-${(strengths||priorities||actionPlan||platoonNotes||seqEarly||seqPitcher)?`
+${(strengths||priorities||actionPlan||platoonNotes)?`
 <h2>Scouting &amp; Development Notes</h2>
 <div class="notes">
   ${noteBlock('Arsenal Strengths',strengths)}
   ${noteBlock('Development Priorities',priorities)}
   ${noteBlock('Action Plan',actionPlan)}
   ${noteBlock('Platoon Notes',platoonNotes)}
-  ${noteBlock('Early Count Sequencing',seqEarly)}
-  ${noteBlock("Pitcher's Count",seqPitcher)}
 </div>`:''}
+
+
 
 <div class="footer">
   <span>@SebThrows &mdash; Pitch Design Worksheet</span>
@@ -2108,7 +1999,7 @@ function importCSVPitches(){
 // UPDATED switchTab (add new tabs)
 // ═══════════════════════════════════════════════════════════════
 function switchTab(id){
-  const ids=['arsenal','analysis','platoon','tunnel','roster','history','import'];
+  const ids=['arsenal','analysis','platoon','roster','history','import'];
   document.querySelectorAll('.tab').forEach((t,i)=>{
     t.classList.toggle('active',ids[i]===id);
   });
@@ -2117,7 +2008,6 @@ function switchTab(id){
   });
   if(id==='analysis')   updateAnalysis();
   if(id==='platoon')    updatePlatoon();
-  if(id==='tunnel')     updateTunnelTable();
   if(id==='roster')     renderRoster();
   if(id==='history')    { updateHistoryFilter(); renderHistory(); }
   setTimeout(drawPlot,50);
