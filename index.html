@@ -77,7 +77,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 .pitch-type-badge{font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;letter-spacing:.08em;max-width:160px}
 .pitch-card-toggle{margin-left:auto;color:var(--text-dimmer);font-size:16px;transition:transform .2s;flex-shrink:0}
 .pitch-card.collapsed .pitch-card-toggle{transform:rotate(-90deg)}
-.pitch-card-body{padding:18px 16px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px}
+.pitch-card-body{padding:18px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
 .pitch-card.collapsed .pitch-card-body{display:none}
 .sub-section-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 .metric-row{display:flex;flex-direction:column;gap:4px;margin-bottom:9px}
@@ -886,18 +886,8 @@ function metricPair(id,nowField,targetField,label,tipId,isText=false){
     <div class="field-label">${label}
       ${tips[tipId]?`<span class="tooltip-icon">?<span class="tooltip-popup">${tips[tipId]}</span></span>`:''}
     </div>
-    <div class="metric-with-target">
-      <div>
-        <input type="${inputType}" ${isText?'':'step="0.1"'} placeholder="Current" value="${escH(p?p[nowField]:'')}"
-          oninput="updateField(${id},'${nowField}',this.value)">
-        <div class="metric-sub">current</div>
-      </div>
-      <div>
-        <input type="${inputType}" ${isText?'':'step="0.1"'} placeholder="Target" value="${escH(p?p[targetField]:'')}"
-          oninput="updateField(${id},'${targetField}',this.value)">
-        <div class="metric-sub">target</div>
-      </div>
-    </div>
+    <input type="${inputType}" ${isText?'':'step="0.1"'} placeholder="Enter value" value="${escH(p?p[nowField]:'')}"
+      oninput="updateField(${id},'${nowField}',this.value)">
   </div>`;
 }
 
