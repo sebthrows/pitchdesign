@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitch Design — @SebThrows</title>
+<meta name="description" content="A free pitch design and arsenal analysis tool for pitchers and coaches. Built by a college pitcher for the game.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #08090c;
+  --surface: #0f1116;
+  --border: #1e2128;
+  --accent: #4fc3f7;
+  --gold: #c9a84c;
+  --gold-light: #e8d5a3;
+  --text: #eceef4;
+  --text-dim: #6b7280;
+  --text-dimmer: #374151;
+  --red: #ef4444;
+  --green: #22c55e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  overflow-x: hidden;
+}
+
+/* grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(8,9,12,.95) 0%, transparent 100%);
+  backdrop-filter: blur(4px);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: .08em;
+  color: var(--text);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: var(--accent);
+  color: #000 !important;
+  padding: 10px 20px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+.nav-cta:hover { background: #81d4fa !important; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* background grid */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(79,195,247,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79,195,247,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+}
+
+/* animated accent circle */
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(79,195,247,.06) 0%, transparent 70%);
+  top: 50%; left: 60%;
+  transform: translate(-50%,-50%);
+  animation: pulse 6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { transform: translate(-50%,-50%) scale(1); opacity: .6; }
+  50% { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
+}
+
+.hero-content { position: relative; z-index: 1; max-width: 760px; }
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  border: 1px solid rgba(79,195,247,.25);
+  border-radius: 2px;
+  background: rgba(79,195,247,.06);
+}
+.hero-tag::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.2; } }
+
+h1.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(64px, 10vw, 130px);
+  line-height: .88;
+  letter-spacing: .02em;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+h1.hero-title .accent { color: var(--accent); }
+h1.hero-title .italic {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--gold);
+}
+
+.hero-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 500px;
+  margin: 28px 0 40px;
+}
+
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.btn-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 3px;
+  transition: all .2s;
+  cursor: pointer;
+  border: none;
+}
+.btn-primary-hero {
+  background: var(--accent);
+  color: #000;
+  font-weight: 500;
+}
+.btn-primary-hero:hover { background: #81d4fa; transform: translateY(-1px); }
+.btn-ghost-hero {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.btn-ghost-hero:hover { border-color: var(--text-dimmer); color: var(--text); }
+
+/* hero stats */
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 64px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.stat-item {}
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  line-height: 1;
+  color: var(--text);
+}
+.stat-num span { color: var(--accent); }
+.stat-label {
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-dimmer);
+  margin-top: 4px;
+}
+
+/* ── SECTIONS ── */
+section { padding: 100px 48px; }
+
+.section-eyebrow {
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: .95;
+  letter-spacing: .02em;
+  margin-bottom: 20px;
+}
+.section-body {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  max-width: 480px;
+}
+
+/* ── FEATURES ── */
+.features { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 64px;
+}
+.feature-card {
+  background: var(--surface);
+  padding: 36px 32px;
+  transition: background .2s;
+}
+.feature-card:hover { background: #141720; }
+.feature-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  display: block;
+}
+.feature-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: .04em;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+.feature-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+
+/* ── STUFF+ SECTION ── */
+.stuffplus-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.score-demo {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 32px;
+}
+.score-demo-title {
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-dimmer);
+  margin-bottom: 20px;
+}
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.score-pitch {
+  font-size: 11px;
+  color: var(--text-dim);
+  width: 100px;
+  flex-shrink: 0;
+}
+.score-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.score-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+.score-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  min-width: 44px;
+  text-align: right;
+}
+.score-label {
+  font-size: 9px;
+  min-width: 70px;
+  text-align: right;
+  opacity: .7;
+}
+
+/* ── HOW IT WORKS ── */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 64px;
+}
+.step {
+  background: var(--bg);
+  padding: 32px 28px;
+}
+.step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  line-height: 1;
+  color: var(--border);
+  margin-bottom: 16px;
+}
+.step-title {
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.step-desc {
+  font-size: 10px;
+  color: var(--text-dimmer);
+  line-height: 1.6;
+}
+
+/* ── ABOUT ── */
+.about-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.about-quote {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(20px, 2.5vw, 28px);
+  line-height: 1.4;
+  color: var(--gold-light);
+  margin-bottom: 24px;
+}
+.about-body {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+.about-body p + p { margin-top: 16px; }
+.about-handle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(79,195,247,.3);
+  padding-bottom: 2px;
+  transition: border-color .2s;
+}
+.about-handle:hover { border-color: var(--accent); }
+
+/* ── CTA ── */
+.cta-section {
+  text-align: center;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+.cta-section .section-title { margin: 0 auto 24px; }
+.cta-section .section-body { margin: 0 auto 40px; text-align: center; }
+
+/* ── FOOTER ── */
+footer {
+  padding: 32px 48px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-dimmer);
+}
+
+/* ── ANIMATIONS ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  nav { padding: 16px 24px; }
+  .nav-links { gap: 16px; }
+  .nav-links a:not(.nav-cta) { display: none; }
+  .hero { padding: 100px 24px 60px; }
+  .hero-glow { display: none; }
+  section { padding: 72px 24px; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .stuffplus-section { grid-template-columns: 1fr; gap: 40px; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .about-section { grid-template-columns: 1fr; gap: 40px; }
+  footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+}
+@media(max-width:600px){
+  nav { padding: 14px 16px; }
+  .hero { padding: 90px 16px 48px; }
+  section { padding: 56px 16px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .hero-stats { gap: 28px; }
+  .stat-num { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">AXIOM<span>.</span></a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#stuffplus">Stuff+</a>
+    <a href="#about">About</a>
+    <a href="pitch-design-worksheet.html" class="nav-cta">Open Tool →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Free · No Login · Built for Coaches & Pitchers</div>
+    <h1 class="hero-title">
+      PITCH<br>
+      <span class="accent">DESIGN</span><br>
+      <span class="italic">by Axiom</span>
+    </h1>
+    <p class="hero-sub">
+      A free arsenal analysis tool that calculates Stuff+, compares against MLB benchmarks, identifies gaps in a pitch mix, and tracks development over time. Built for high school and college pitching staffs to take control of their development.
+    </p>
+    <div class="hero-actions">
+      <a href="pitch-design-worksheet.html" class="btn-hero btn-primary-hero">
+        Open the Tool →
+      </a>
+      <a href="#features" class="btn-hero btn-ghost-hero">See Features</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">6<span>+</span></div>
+        <div class="stat-label">Analysis Tabs</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Stuff+ Inputs</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">11</div>
+        <div class="stat-label">Pitch Types</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">100<span>%</span></div>
+        <div class="stat-label">Free · Always</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-eyebrow fade-up">What's Inside</div>
+    <h2 class="section-title fade-up">Everything you need<br>to develop a pitcher.</h2>
+    <div class="features-grid fade-up">
+      <div class="feature-card">
+        <span class="feature-icon">⚾</span>
+        <div class="feature-title">Arsenal Builder</div>
+        <p class="feature-desc">Input velocity, spin, IVB, HB, extension, and VAA for each pitch. Visualize the full movement profile on a live plot.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <div class="feature-title">Stuff+ Model</div>
+        <p class="feature-desc">Estimated pitch quality score calibrated against 2024 MLB averages. Updates live as you type. Component breakdown shows exactly what to fix.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <div class="feature-title">Gap Recommender</div>
+        <p class="feature-desc">Scans the arsenal and flags missing pitch types, velocity separation issues, and usage imbalances with a reason for each flag.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📈</span>
+        <div class="feature-title">MLB Benchmarks</div>
+        <p class="feature-desc">Compares every metric against 2024 Statcast averages by pitch type. Green = above average. Red = below. Exact diff shown.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔄</span>
+        <div class="feature-title">Platoon Splits</div>
+        <p class="feature-desc">Estimates how each pitch plays vs. same-handed and opposite-handed hitters based on movement, type, and handedness.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📁</span>
+        <div class="feature-title">Roster & History</div>
+        <p class="feature-desc">Save your full pitching staff. Log sessions over time and track Stuff+ trends per pitch with auto-generated charts.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⬆</span>
+        <div class="feature-title">CSV Import</div>
+        <p class="feature-desc">Drag and drop a Trackman or Rapsodo export. Auto-maps columns, groups by pitch type, and populates the tool in one click.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⬇</span>
+        <div class="feature-title">PDF Export</div>
+        <p class="feature-desc">Download a clean, branded scouting report with movement plot, Stuff+ scores, benchmarks, and development notes.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔗</span>
+        <div class="feature-title">Share Links</div>
+        <p class="feature-desc">Encode a full pitcher profile into a shareable URL. Send it to a coach, open it on another device — no login needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STUFF+ -->
+<section id="stuffplus">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="stuffplus-section">
+      <div class="fade-up">
+        <div class="section-eyebrow">Stuff+ Model</div>
+        <h2 class="section-title">Know exactly<br>where you stand.</h2>
+        <p class="section-body">
+          Stuff+ is calculated from five physical inputs — velocity, induced vertical break, horizontal break, extension, and vertical approach angle. 100 = MLB average for that pitch type. Everything above is upside. Everything below is a development target.<br><br>
+          VAA is estimated from your other inputs if you don't have it directly. The confidence indicator tells you how many inputs are driving the score.
+        </p>
+        <div style="margin-top:32px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+          <div style="text-align:center;padding:12px 6px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#c9a84c">30%</div>
+            <div style="font-size:8px;color:var(--text-dimmer);margin-top:3px;letter-spacing:.06em;text-transform:uppercase">Velo</div>
+          </div>
+          <div style="text-align:center;padding:12px 6px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#c9a84c">25%</div>
+            <div style="font-size:8px;color:var(--text-dimmer);margin-top:3px;letter-spacing:.06em;text-transform:uppercase">IVB</div>
+          </div>
+          <div style="text-align:center;padding:12px 6px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#c9a84c">20%</div>
+            <div style="font-size:8px;color:var(--text-dimmer);margin-top:3px;letter-spacing:.06em;text-transform:uppercase">HB</div>
+          </div>
+          <div style="text-align:center;padding:12px 6px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#c9a84c">13%</div>
+            <div style="font-size:8px;color:var(--text-dimmer);margin-top:3px;letter-spacing:.06em;text-transform:uppercase">VAA</div>
+          </div>
+          <div style="text-align:center;padding:12px 6px;background:var(--surface);border:1px solid var(--border);border-radius:4px">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#c9a84c">12%</div>
+            <div style="font-size:8px;color:var(--text-dimmer);margin-top:3px;letter-spacing:.06em;text-transform:uppercase">Ext</div>
+          </div>
+        </div>
+      </div>
+      <div class="score-demo fade-up">
+        <div class="score-demo-title">Example — RHP Arsenal</div>
+        <div class="score-row">
+          <div class="score-pitch">4-Seam FB</div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" style="width:82%;background:#ce93d8"></div>
+          </div>
+          <div class="score-num" style="color:#ce93d8">131</div>
+          <div class="score-label" style="color:#ce93d8">Elite</div>
+        </div>
+        <div class="score-row">
+          <div class="score-pitch">Sweeper</div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" style="width:72%;background:#66bb6a"></div>
+          </div>
+          <div class="score-num" style="color:#66bb6a">118</div>
+          <div class="score-label" style="color:#66bb6a">Plus</div>
+        </div>
+        <div class="score-row">
+          <div class="score-pitch">Changeup</div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" style="width:61%;background:#4fc3f7"></div>
+          </div>
+          <div class="score-num" style="color:#4fc3f7">103</div>
+          <div class="score-label" style="color:#4fc3f7">Above Avg</div>
+        </div>
+        <div class="score-row">
+          <div class="score-pitch">Curveball</div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" style="width:48%;background:#ffca28"></div>
+          </div>
+          <div class="score-num" style="color:#ffca28">88</div>
+          <div class="score-label" style="color:#ffca28">Below Avg</div>
+        </div>
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:9px;color:var(--text-dimmer);line-height:1.6">
+          Estimated model · Not official MLB Stuff+ · 100 = MLB avg for pitch type
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- TOOL PREVIEW -->
+<section style="padding:0 48px 80px;background:var(--surface);border-bottom:1px solid var(--border)">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-eyebrow fade-up" style="padding-top:80px">The Tool</div>
+    <h2 class="section-title fade-up">See it in action.</h2>
+    <div class="fade-up" style="margin-top:32px;position:relative">
+      <div style="background:#1a1d24;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.6)">
+        <!-- Browser chrome -->
+        <div style="background:#141720;padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
+          <div style="width:10px;height:10px;border-radius:50%;background:#ef4444;opacity:.7"></div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#ffca28;opacity:.7"></div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#22c55e;opacity:.7"></div>
+          <div style="flex:1;background:#0f1116;border-radius:4px;padding:4px 12px;margin:0 16px;font-size:10px;color:#454a5a;font-family:monospace">pitch-design.axiom.app</div>
+        </div>
+        <!-- Tool UI -->
+        <div style="background:#0a0c10">
+          <!-- Header -->
+          <div style="padding:14px 24px;border-bottom:1px solid #1e2128;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:8px;color:#4fc3f7;font-family:monospace;letter-spacing:.15em;text-transform:uppercase;margin-bottom:3px">⚾ Axiom Pitch Design</div>
+              <div style="font-size:16px;font-weight:900;color:#eceef4;letter-spacing:.02em;font-family:sans-serif">PITCH<span style="color:#4fc3f7">DESIGN</span></div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <div style="border:1px solid #252830;border-radius:3px;padding:5px 10px;font-size:9px;color:#6b7280;font-family:monospace">🔗 Share</div>
+              <div style="background:#4fc3f7;border-radius:3px;padding:5px 10px;font-size:9px;color:#000;font-family:monospace;font-weight:600">↓ Download PDF</div>
+            </div>
+          </div>
+          <!-- Tabs -->
+          <div style="padding:0 24px;display:flex;gap:2px;border-bottom:1px solid #1e2128;background:#0a0c10">
+            <div style="padding:8px 14px;font-size:8px;font-family:monospace;color:#4fc3f7;border-bottom:2px solid #4fc3f7;text-transform:uppercase;letter-spacing:.08em">Arsenal Builder</div>
+            <div style="padding:8px 14px;font-size:8px;font-family:monospace;color:#374151;text-transform:uppercase;letter-spacing:.08em">Analysis</div>
+            <div style="padding:8px 14px;font-size:8px;font-family:monospace;color:#374151;text-transform:uppercase;letter-spacing:.08em">Platoon</div>
+            <div style="padding:8px 14px;font-size:8px;font-family:monospace;color:#374151;text-transform:uppercase;letter-spacing:.08em">Roster</div>
+          </div>
+          <!-- Content -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:300px">
+            <!-- Pitch cards -->
+            <div style="padding:16px;border-right:1px solid #1e2128">
+              <!-- Card 1 expanded -->
+              <div style="background:#111318;border:1px solid #252830;border-radius:6px;margin-bottom:8px;overflow:hidden">
+                <div style="background:#181b22;padding:9px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #252830">
+                  <div style="width:7px;height:7px;border-radius:50%;background:#4fc3f7"></div>
+                  <span style="font-size:12px;font-weight:900;color:#eceef4;font-family:sans-serif;letter-spacing:.03em">4-SEAM</span>
+                  <span style="background:#4fc3f718;color:#4fc3f7;border:1px solid #4fc3f733;border-radius:3px;padding:1px 6px;font-size:7px;font-family:monospace">4-Seam FB</span>
+                  <span style="margin-left:auto;font-size:9px;color:#454a5a">▾</span>
+                </div>
+                <div style="padding:10px 12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+                  <div>
+                    <div style="font-size:6px;color:#454a5a;font-family:monospace;text-transform:uppercase;margin-bottom:3px">Velocity</div>
+                    <div style="background:#181b22;border:1px solid #252830;border-radius:3px;padding:4px 6px;font-size:10px;color:#eceef4">97.2 mph</div>
+                  </div>
+                  <div>
+                    <div style="font-size:6px;color:#454a5a;font-family:monospace;text-transform:uppercase;margin-bottom:3px">IVB</div>
+                    <div style="background:#181b22;border:1px solid #252830;border-radius:3px;padding:4px 6px;font-size:10px;color:#eceef4">18.6"</div>
+                  </div>
+                  <div>
+                    <div style="font-size:6px;color:#454a5a;font-family:monospace;text-transform:uppercase;margin-bottom:3px">Stuff+</div>
+                    <div style="font-size:24px;font-weight:900;color:#ce93d8;line-height:1;font-family:sans-serif">131</div>
+                    <div style="font-size:7px;color:#ce93d8;font-family:monospace">Elite</div>
+                  </div>
+                </div>
+                <div style="padding:0 12px 10px">
+                  <div style="margin-bottom:4px"><div style="display:flex;justify-content:space-between;font-size:6px;font-family:monospace;color:#454a5a;margin-bottom:2px"><span>Velocity (30%)</span><span style="color:#ce93d8">158</span></div><div style="height:3px;background:#1e2128;border-radius:2px"><div style="height:100%;width:88%;background:#ce93d8;border-radius:2px"></div></div></div>
+                  <div style="margin-bottom:4px"><div style="display:flex;justify-content:space-between;font-size:6px;font-family:monospace;color:#454a5a;margin-bottom:2px"><span>IVB (25%)</span><span style="color:#66bb6a">131</span></div><div style="height:3px;background:#1e2128;border-radius:2px"><div style="height:100%;width:68%;background:#66bb6a;border-radius:2px"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:6px;font-family:monospace;color:#454a5a;margin-bottom:2px"><span>VAA ~est (13%)</span><span style="color:#4fc3f7">129</span></div><div style="height:3px;background:#1e2128;border-radius:2px"><div style="height:100%;width:66%;background:#4fc3f7;border-radius:2px"></div></div></div>
+                </div>
+              </div>
+              <!-- Card 2 collapsed -->
+              <div style="background:#111318;border:1px solid #252830;border-radius:6px;margin-bottom:8px">
+                <div style="background:#181b22;padding:9px 12px;display:flex;align-items:center;gap:8px">
+                  <div style="width:7px;height:7px;border-radius:50%;background:#f06292"></div>
+                  <span style="font-size:12px;font-weight:900;color:#eceef4;font-family:sans-serif">SWEEPER</span>
+                  <span style="background:#f0629218;color:#f06292;border:1px solid #f0629233;border-radius:3px;padding:1px 6px;font-size:7px;font-family:monospace">Sweeper</span>
+                  <span style="margin-left:auto;font-size:8px;color:#66bb6a;font-family:monospace;font-weight:700">118 Plus</span>
+                  <span style="font-size:9px;color:#454a5a;margin-left:6px">▸</span>
+                </div>
+              </div>
+              <!-- Card 3 collapsed -->
+              <div style="background:#111318;border:1px solid #252830;border-radius:6px">
+                <div style="background:#181b22;padding:9px 12px;display:flex;align-items:center;gap:8px">
+                  <div style="width:7px;height:7px;border-radius:50%;background:#81c784"></div>
+                  <span style="font-size:12px;font-weight:900;color:#eceef4;font-family:sans-serif">CHANGEUP</span>
+                  <span style="background:#81c78418;color:#81c784;border:1px solid #81c78433;border-radius:3px;padding:1px 6px;font-size:7px;font-family:monospace">Changeup</span>
+                  <span style="margin-left:auto;font-size:8px;color:#4fc3f7;font-family:monospace;font-weight:700">103 Above Avg</span>
+                  <span style="font-size:9px;color:#454a5a;margin-left:6px">▸</span>
+                </div>
+              </div>
+            </div>
+            <!-- Movement plot -->
+            <div style="padding:16px">
+              <div style="font-size:7px;color:#454a5a;font-family:monospace;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Movement Plot</div>
+              <div style="background:#111318;border:1px solid #252830;border-radius:6px;padding:10px;position:relative;overflow:hidden" id="mockupWrap">
+                <canvas id="mockupCanvas"></canvas>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px">
+                <div style="background:#111318;border:1px solid #252830;border-radius:4px;padding:8px;text-align:center"><div style="font-size:6px;color:#454a5a;font-family:monospace;text-transform:uppercase;margin-bottom:2px">Pitches</div><div style="font-size:18px;font-weight:900;color:#4fc3f7;font-family:sans-serif">3</div></div>
+                <div style="background:#111318;border:1px solid #252830;border-radius:4px;padding:8px;text-align:center"><div style="font-size:6px;color:#454a5a;font-family:monospace;text-transform:uppercase;margin-bottom:2px">Avg Velo</div><div style="font-size:18px;font-weight:900;color:#eceef4;font-family:sans-serif">92.1</div></div>
+                <div style="background:#111318;border:1px solid #252830;border-radius:4px;padding:8px;text-align:center"><div style="font-size:6px;color:#454a5a;font-family:monospace;text-transform:uppercase;margin-bottom:2px">Avg Stuff+</div><div style="font-size:18px;font-weight:900;color:#ce93d8;font-family:sans-serif">117</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:60%;height:80px;background:radial-gradient(ellipse,rgba(79,195,247,.1) 0%,transparent 70%);pointer-events:none"></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-eyebrow fade-up">How It Works</div>
+    <h2 class="section-title fade-up">From raw data<br>to a development plan.</h2>
+    <div class="steps fade-up">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Input Your Arsenal</div>
+        <p class="step-desc">Add each pitch, select its type, and enter your data. Import directly from a Trackman or Rapsodo CSV export.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Get Your Stuff+</div>
+        <p class="step-desc">Scores calculate live as you type. The component breakdown shows exactly which metric is limiting each pitch.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Find the Gaps</div>
+        <p class="step-desc">The recommender flags missing pitch types, movement contrast issues, and usage imbalances automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Track Over Time</div>
+        <p class="step-desc">Log sessions to the history tab and watch Stuff+ trend charts develop across a semester of work.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="about-section">
+      <div class="fade-up">
+        <div class="section-eyebrow">About</div>
+        <p class="about-quote">"Built because this tool should exist at every level of the game."</p>
+        <div class="about-body">
+          <p>Every pitcher has data. Most don't know what to do with it. Spin rates, movement profiles, and VAA numbers sitting in a Trackman export don't mean anything without a framework to interpret them and a clear direction for what to change.</p>
+          <p>The concepts being used at the professional level — Stuff+, movement profiling, platoon vulnerabilities — are not complicated. They just haven't been packaged in a way that's accessible to high school and college programs. This tool changes that.</p>
+          <p>Free, no login, works on any device. Import from Trackman or Rapsodo, or enter data manually. Turn numbers into a development plan.</p>
+        </div>
+        <a href="https://instagram.com/SebThrows" target="_blank" class="about-handle">
+          ⚾ @SebThrows on Instagram
+        </a>
+      </div>
+      <div class="fade-up" style="display:flex;flex-direction:column;gap:16px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:28px">
+          <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Good for</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-dim)"><span style="color:var(--green)">✓</span> College pitching coaches</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-dim)"><span style="color:var(--green)">✓</span> High school programs</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-dim)"><span style="color:var(--green)">✓</span> Independent / JUCO programs</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-dim)"><span style="color:var(--green)">✓</span> Players self-scouting their arsenal</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-dim)"><span style="color:var(--green)">✓</span> Coaches building a portfolio</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text-dim)"><span style="color:var(--green)">✓</span> Anyone with Trackman or Rapsodo access</div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:28px">
+          <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:16px">No account needed</div>
+          <p style="font-size:11px;color:var(--text-dim);line-height:1.7">Everything runs in your browser. Roster and history data saves locally. Share any pitcher profile as a link. Download reports as PDF. Always free.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div style="max-width:600px;margin:0 auto">
+    <div class="section-eyebrow fade-up">Get Started</div>
+    <h2 class="section-title fade-up">Open the tool.<br>It's free.</h2>
+    <p class="section-body fade-up">No signup. No download. Works in any browser.</p>
+    <div class="fade-up">
+      <a href="pitch-design-worksheet.html" class="btn-hero btn-primary-hero" style="margin:0 auto">
+        Open Pitch Design →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>Pitch Design &nbsp;·&nbsp; @SebThrows</span>
+  <span>Free · Open · Built for the game</span>
+</footer>
+
+<script>
+// Scroll-triggered fade-up animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){ e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+<script>
+window.addEventListener('load', function(){
+  const canvas = document.getElementById('mockupCanvas');
+  const wrap   = document.getElementById('mockupWrap');
+  if(!canvas || !wrap) return;
+  const dpr  = window.devicePixelRatio || 1;
+  const size = wrap.clientWidth - 20;
+  canvas.width  = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width  = size + 'px';
+  canvas.style.height = size + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = size, H = size, cx = W/2, cy = H/2;
+  const scale = (W * 0.4) / 20;
+  ctx.fillStyle = '#111318'; ctx.fillRect(0,0,W,H);
+  [5,10,15,20].forEach(r => {
+    ctx.beginPath(); ctx.arc(cx,cy,r*scale,0,Math.PI*2);
+    ctx.strokeStyle = r===10?'#252830':'#181b22'; ctx.lineWidth=r===10?1.2:0.6; ctx.stroke();
+  });
+  ctx.strokeStyle='#1e2128'; ctx.lineWidth=0.6;
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+  [{name:'4-Seam',hb:9.4,ivb:18.6,color:'#4fc3f7'},
+   {name:'Sweeper',hb:-16.2,ivb:3.1,color:'#f06292'},
+   {name:'Changeup',hb:12.1,ivb:6.2,color:'#81c784'}
+  ].forEach(p => {
+    const px = cx + p.hb*scale, py = cy - p.ivb*scale;
+    const g = ctx.createRadialGradient(px,py,0,px,py,14);
+    g.addColorStop(0,p.color+'55'); g.addColorStop(1,'transparent');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(px,py,14,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle=p.color; ctx.fill();
+    ctx.strokeStyle='#000'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='bold 7px monospace'; ctx.textAlign='center';
+    ctx.fillText(p.name.slice(0,7), px, py+15);
+  });
+});
+</script>
+
+</body>
+</html>
